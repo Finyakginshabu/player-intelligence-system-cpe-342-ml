@@ -1,7 +1,6 @@
 ﻿# Player Intelligence System (CPE342 ML, KMUTT 1/2026)
 
 Kaggle competition: https://www.kaggle.com/competitions/player-intelligence-system-cpe-342-ml
-(private class competition: log in with an enrolled account to view it)
 
 Karena Thailand needs five models that together feed a Player LTV system. All five share one
 submission file.
@@ -126,7 +125,7 @@ When sources disagree, follow the actual data files, then the Kaggle page, then 
 |---|---|---|---|---|
 | Task 1/5 metric | F2 / F3 **(Macro)** | – | plain F2 / F3 formula | **macro**. `metrics.f2/f3` default to macro, and binary is kept for logging. Macro also scores class 0, so false positives cost more. |
 | Task 2 metric | F1 (Macro) | – | "F1" | macro |
-| Task 4 class ids | 0 PUBE, 1 Free Fried, 2 FiveN, 3 Roblock, 4 7-Eleven | 0 7-11 Knights, 1 FiveN, 2 Free Fried, 3 PUBE, 4 Roblock | strings (`freefried`…) | **integers in train.csv's own encoding, never remapped.** Names only matter for the report. |
+| Task 4 class ids | 0 PUBE, 1 Free Fried, 2 FiveN, 3 Roblock, 4 7-Eleven | datacard: 0 7-11 Knights, 1 FiveN, 2 Free Fried, 3 PUBE, 4 Roblock. **train.csv holds strings** (`7-11k`, `fiveN`, `freefried`, `pube`, `roblock`) | strings (`freefried`…) | **Unresolved: task 4 scores 0 on the LB for every team** (public LB scores above 0.70 are consistent with that). The datacard order (v1, 0.60044) and the page order (v2, 0.59981) score the same. Open questions: integers vs strings (the PDF sample shows `freefried`), and which order. Ignore task 4 until the TA answers; submit the datacard order meanwhile. |
 | Separator | "pipe-separated `id\|task1\|…`" | `sample_submission.csv` uses commas (Kaggle-hosted copy too) | – | **comma**. The page text is wrong. |
 | Task 4 image size | 200×100 | 230×120 | 230×120 | read from the files |
 | ID mapping | "All test samples share the same ID range" (sentence cut off) | 25,889 rows per test.csv, disjoint players | – | row order (see above) |

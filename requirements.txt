@@ -1,0 +1,25 @@
+﻿# Pinned to the versions installed on the dev machine (Python 3.12).
+numpy==2.5.3
+pandas==3.0.6
+scipy==1.18.1
+scikit-learn==1.9.1
+imbalanced-learn==0.14.2
+matplotlib==3.11.2
+seaborn==0.13.2
+pyarrow==26.0.0
+kaggle==2.2.5
+nbformat==5.11.1
+ipykernel==7.3.0
+pytest==9.2.0
+
+# Not yet installed: pin with `pip freeze` after first install.
+xgboost
+lightgbm
+catboost
+optuna
+jupyter
+
+# Task 4 only (usually run on Colab/Kaggle GPU, where torch is preinstalled)
+torch==2.14.1
+torchvision==0.29.2
+timm

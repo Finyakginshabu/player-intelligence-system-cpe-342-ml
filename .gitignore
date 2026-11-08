@@ -1,0 +1,28 @@
+# data & submissions (log.md is tracked)
+data/
+cpe342-kaggle-main/
+submissions/*.csv
+submission.csv
+
+# large model artifacts (final_pred.csv stays tracked)
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.joblib
+*.cbm
+catboost_info/
+
+# python / jupyter
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+
+# local-only
+kaggle.json
+.env

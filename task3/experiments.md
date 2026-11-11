@@ -81,3 +81,23 @@ Data: `train.csv` 104,000 × 34 (`player_id`, 32 numeric features, `spending_30d
 5. **Several features carry no signal** (|Spearman| < 0.03): `seasonal_spending_pattern`, `guild_membership`,
    `primary_game`, `account_age_days`, `cross_game_activity`, `games_played`, `tournament_participation`,
    `days_since_last_login`. Ablation candidates.
+
+## Round 5 (autopilot, 2026-11-09): variance reduction for the two-stage model (`src/experiments_r5.py`)
+
+| Date | Change | CV NMAE mean ± std | Kept? |
+|---|---|---|---|
+| 2026-11-09 | Quantile interpolation in log space / against the normal score Φ⁻¹(α) instead of raw THB (post-processing only) | 0.78779 (vs 0.78780) | no (no difference: the α grid is dense enough) |
+| 2026-11-09 | Stage 1 averaged over 3 LightGBM seeds | 0.78785 | no |
+| 2026-11-09 | Stage 2 (7 quantile models) averaged over 3 seeds in log space | 0.78832 | no |
+| 2026-11-09 | Both stages × 3 seeds + CatBoost in the gate (prob average) | **0.78843 ± 0.0036** (per fold +0.0008 / +0.0007 / +0.0006 / +0.0009 / +0.0002) | **no**: every fold up, but +0.0006 ≪ fold std 0.0037. Preds kept as `oof/test_twostage_ms_cat.npy` for a later decision |
+
+- Error budget of the round-3 model: 66% of Σ|y−ŷ| on rows where y and ŷ > 0, 31% from y = 0 but ŷ > 0, 3% from missed
+  spenders. Perfect amounts on the first group would give NMAE 0.916, but the amount residual is noise (round 4).
+- The gate is well calibrated (bins 0.45–0.5 → 0.455 spend rate, 0.5–0.55 → 0.551) and the 0.5 cut is optimal (0.45 / 0.55 →
+  0.7877 / 0.7875). CatBoost's gate has the same AUC (0.7844); averaging gates only improves logloss 0.5532 → 0.5524.
+- What gain there is comes from seed-averaging the quantile models (≈ +0.0005); the 3× cost (7 min) is cheap, so this is a
+  reasonable "final polish" option even though it fails the keep rule.
+- 2026-11-11: two-stage final uploaded in sub_v19 (with task 1 5-seed and task 5 ID block): LB 0.76108; t1 + t3 together +0.00062 (predicted +0.0007), so the two-stage gain holds on the LB.
+
+## 2026-11-11: round-5 multi-seed model used for the last polish upload
+`outputs/pred_twostage_ms_cat.csv` = `test_twostage_ms_cat.npy` (both stages × 3 seeds + CatBoost gate, CV 0.78843) as an id,prediction file, written by `task2/src/experiments_r6.py`. In `submissions/sub_v21_clean_polish.csv`: **LB 0.71612** (Δ +0.00004 vs v20 together with the task-2 offsets, within noise). `final_pred.csv` unchanged.

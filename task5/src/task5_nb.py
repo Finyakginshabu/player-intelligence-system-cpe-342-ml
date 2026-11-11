@@ -2,9 +2,15 @@
 # # Task 5: Account Security Monitoring (unsupervised)
 #
 # - **Type:** Unsupervised anomaly detection on `test.csv` only (no labels, no train set)
-# - **Metric:** F3 **macro** (mean of the class-0 and class-1 F3). Over-flagging also hurts class 0.
+# - **Metric:** F3 on the anomaly class (**binary**; the Kaggle page says macro, but the LB results fit binary F3
+#   exactly, see `experiments.md`). Recall-hungry: a missed anomaly costs 9x a false flag.
 # - Baseline: IsolationForest on engineered cross-period features, **flag rate 15%** (LB sweep 6% < 10% < 15%;
-#   15% = best LB 0.60499, `submissions/sub_v4_task5_rate15.csv`).
+#   15% = LB 0.60499, `submissions/sub_v4_task5_rate15.csv`).
+# - Round 1: 7 detached-cluster anomaly types flagged first, IF fills up to 15% (`typesfirst`, LB 0.66175).
+# - Round 2 (2026-11-09): an 8th type ("erratic performance") found by cross-base tail co-occurrence (section 5b).
+#   typesfirst8 at 15%: LB 0.69852 (+0.0191).
+# - Round 3 (2026-11-10): flag ONLY the 8 types (2,115 rows, 8.2%), no IsolationForest filler: LB 0.75705 (+0.0155),
+#   so the filler was almost all false alarms. `final_pred.csv` = typed rows only.
 #
 # Final notebook: must run top-to-bottom. Source: `src/task5_nb.py` (jupytext percent format).
 
@@ -207,7 +213,7 @@ def flags_at(score, rate):
     return out
 
 
-# Candidate files for the planned LB check (only task 5 changes); final_pred.csv is untouched.
+# Candidate files for the planned LB check (only task 5 changes).
 for rate in (0.06, 0.15):
     f = flags_at(score_types, rate)
     pd.DataFrame({"id": df["player_id"], "prediction": f}).to_csv(OUT / f"pred_typesfirst_rate{round(rate * 100):02d}.csv", index=False)
@@ -215,8 +221,86 @@ for rate in (0.06, 0.15):
           f" | overlap with IF top-{rate:.0%}: {(f & flags_at(score_iso, rate)).sum() / f.sum():.3f}")
 
 # %% [markdown]
-# ## 6. Write `outputs/final_pred.csv` (top `FLAG_RATE` = 15% of the IsolationForest score)
+# ## 5b. An 8th type without a gap: "erratic performance" (round 2, 2026-11-09)
+# In normal rows the 29 periodic bases are **mutually independent** (max |Spearman| between per-row means of two
+# bases: 0.025; each base = a per-player level + per-period noise). So a type made of *moderate* shifts in several
+# bases at once leaves no empty gap, yet shows up as **excess co-occurrence of their tails**.
+# `src/analysis_r2.py` scans all ~23k cross-base pairs of 5% tails (per-row level, within-row sd, period-4 change,
+# period-4 value) outside the 7 known types. Exactly one pair stands out: **high accuracy_std AND high kda_std**
+# (222 rows vs 60 expected, z = 20.9; excess saturates at ~190 rows from the 8% tails on). With that corner
+# removed, the largest z is 4.25 over 23,332 pairs, i.e. noise. Members also have high performance_stability, and
+# look like accuracy_std ~ U(9, 12), kda_std ~ U(0.7, 1.0), performance_stability ~ U(0.85, 0.95) in all four
+# periods, with normal accuracy/kda means (wildly inconsistent results from a stable player, e.g. a shared
+# account). Each value on its own is common, so no single-feature rule can isolate them.
+#
+# Detector: rank-gaussianise the per-row means of the three bases against the non-type rows, then fit a
+# 2-component EM with the bulk fixed at the null N(0, C0) (independent bases) and a free Gaussian anomaly
+# component. The posterior is bimodal; rows with posterior > 0.1 are typed `erratic`.
 
 # %%
-final = utils.write_final_pred(TASK, df["player_id"], flag)
+from scipy.special import ndtri
+from scipy.stats import multivariate_normal
+
+ERRATIC_BASES = ["accuracy_std", "kda_std", "performance_stability"]
+
+
+def gaussianise(x, ref):
+    """Normal scores of x against the empirical CDF of ref (finite values); NaN -> 0 (bulk centre)."""
+    r = np.sort(ref[np.isfinite(ref)])
+    u = (np.searchsorted(r, x, side="left") + np.searchsorted(r, x, side="right")) / 2 / len(r)
+    z = ndtri(np.clip(u, 0.5 / len(r), 1 - 0.5 / len(r)))
+    return np.where(np.isfinite(x), z, 0.0)
+
+
+def erratic_posterior(d, fit_mask, n_iter=300):
+    M = np.column_stack([np.nanmean(period_matrix(d, f), axis=1) for f in ERRATIC_BASES])
+    Z = np.column_stack([gaussianise(M[:, i], M[fit_mask, i]) for i in range(M.shape[1])])
+    Zf, dim = Z[fit_mask], Z.shape[1]
+    C0 = np.cov(Zf.T)  # bulk = independent bases; the anomaly share (< 1%) barely moves it
+    mu, S, pi = np.array([1.8, 1.8, 1.0]), 0.5 * np.eye(dim), 0.01
+
+    def post(X, mu, S, pi):
+        la = np.log(pi) + multivariate_normal(mu, S, allow_singular=True).logpdf(X)
+        lb = np.log(1 - pi) + multivariate_normal(np.zeros(dim), C0).logpdf(X)
+        return 1 / (1 + np.exp(np.clip(lb - la, -50, 50)))
+
+    for _ in range(n_iter):
+        r = post(Zf, mu, S, pi)
+        pi = r.mean()
+        mu = (r[:, None] * Zf).sum(0) / r.sum()
+        D = Zf - mu
+        S = (r[:, None, None] * np.einsum("ni,nj->nij", D, D)).sum(0) / r.sum() + 1e-3 * np.eye(dim)
+    return post(Z, mu, S, pi), pi, mu, S
+
+
+in_types = tier > 0  # the 7 types + loc_only
+post_err, pi_err, mu_err, S_err = erratic_posterior(df, ~in_types)
+print(f"erratic component: {pi_err * (~in_types).sum():.0f} rows expected among non-type rows | mean (normal scores) "
+      f"{np.round(mu_err, 2)} | sd {np.round(np.sqrt(np.diag(S_err)), 2)}")
+print("posterior among non-type rows:", {t: int((post_err[~in_types] > t).sum()) for t in (0.05, 0.1, 0.5, 0.9)},
+      "| posterior > 0.5 inside the 7 known types:", int((post_err[in_types] > 0.5).sum()), "of", int(in_types.sum()))
+erratic = (post_err > 0.1) & ~in_types
+print("rows typed erratic:", int(erratic.sum()), "| already in the typesfirst-15% flags:",
+      int(flags_at(score_types, FLAG_RATE)[erratic].sum()))
+
+# %%
+# typesfirst8: the 7 tiers as before, erratic rows in tier 1 ordered by posterior, IF rank for everything else.
+score_types8 = np.where(erratic, 1 + post_err, score_types)
+utils.save_preds(TASK, "typesfirst8", np.array([]), score_types8)
+flag8 = flags_at(score_types8, FLAG_RATE)
+pd.DataFrame({"id": df["player_id"], "prediction": flag8}).to_csv(OUT / "pred_typesfirst8_rate15.csv", index=False)
+flag7 = flags_at(score_types, FLAG_RATE)
+print(f"typesfirst8 {FLAG_RATE:.0%}: {flag8.sum()} flags | typed rows flagged {int(flag8[(tier > 0) | erratic].sum())}"
+      f"/{int(((tier > 0) | erratic).sum())} | rows changed vs typesfirst {int((flag8 != flag7).sum())}")
+
+# %% [markdown]
+# ## 6. Write `outputs/final_pred.csv`: the 8 types only (no filler)
+# Binary F3 = 10·TP / (9P + K). Dropping the 1,768 IsolationForest filler rows raised the LB by +0.0155 (2026-11-10):
+# the filler held almost no anomalies, so the 8 detected types are essentially the whole anomaly set (t5 ≈ 0.99).
+
+# %%
+flag_types = (score_types8 > 1).astype(int)  # tiers 1-4 and erratic rows score > 1; IF-only rows score <= 1
+print("typed-only flags:", flag_types.sum(), f"({flag_types.mean():.2%})")
+pd.DataFrame({"id": df["player_id"], "prediction": flag_types}).to_csv(OUT / "pred_typesonly8.csv", index=False)
+final = utils.write_final_pred(TASK, df["player_id"], flag_types)
 final["prediction"].value_counts()

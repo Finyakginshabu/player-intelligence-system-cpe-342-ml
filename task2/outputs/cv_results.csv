@@ -1,2 +1,3 @@
 model,macro_f1_argmax,macro_f1_nested_mult,fold_std,macro_f1_full_mult,weights,best_iter_mean
 lgbm_comp,0.7524906747859326,0.7522465842141479,0.0016918664874073315,0.7525235807386123,"[1.0, 1.0, 1.0, 1.0]",163.2
+snb (final),0.7552730492704215,,0.003571650411382272,,,

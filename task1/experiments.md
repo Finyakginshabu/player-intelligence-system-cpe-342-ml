@@ -182,3 +182,56 @@ No duplicate feature rows; no `player_id` overlap between train and test.
   re-masked with the test per-column NaN rates, to make sure models don't lean on columns that are often
   missing in test (`headshot_percentage`, `win_rate`).
 - Baseline to keep for the report: logistic regression on median-imputed, scaled features plus FE3/FE4.
+
+## 2026-11-09: LB confirms BINARY F2
+
+| Date | Change | CV score | LB score | Notes |
+|---|---|---|---|---|
+| 2026-11-09 | LightGBM (raw), threshold 0.164 tuned for **binary** F2 (`pred_lgbm_binthr.csv`) | OOF binary F2 0.8370 (macro 0.7091) | **0.67942** (Δ +0.0177 vs the same file with thr 0.402) | Predicted +0.020 if Kaggle scores binary, −0.014 if macro → **task 1 is scored with BINARY F2**. Optimise `average="binary"` from now on |
+
+OOF binary F2 at each model's best threshold (2026-11-09): lgbm_nonoise 0.8373 @ 0.17, lgbm_fe 0.8369 @ 0.18,
+lgbm 0.8368 @ 0.16, lgbm_qda_sig 0.8367 @ 0.17, cat_raw 0.8359 @ 0.18, logreg 0.7641 @ 0.15.
+The feature variants all plateau at about 0.837, so further gains have to come from ensembling, Optuna or multi-seed averaging.
+Earlier notes in this file that say "macro" are superseded.
+
+## Round 3 (autopilot, 2026-11-09): variance reduction for binary F2 (`src/experiments_r3.py`)
+
+Protocol: nested binary F2 (each fold scored at the threshold tuned on the other 4 folds' OOF), same 5 folds.
+Reference `lgbm` (31 raw, seed 42) = **0.8368 ± 0.0010** (folds 0.8369 / 0.8364 / 0.8378 / 0.8351 / 0.8378).
+
+| Exp | Change | Binary F2 nested (mean ± std) | Δ | Decision |
+|---|---|---|---|---|
+| R3a | Mean of the 5 existing tree models (lgbm, lgbm_nonoise, lgbm_fe, lgbm_qda_sig, cat_raw) | 0.8374 ± 0.0009 | +0.0006 | no (< std) |
+| R3b | **LightGBM, 15 signal features, 5 seeds (42–46) averaged** | **0.8379 ± 0.0014** (folds 0.8375 / 0.8379 / 0.8398 / 0.8356 / 0.8386) | **+0.0011, every fold up** (+0.0006 / +0.0015 / +0.0020 / +0.0005 / +0.0008) | **yes → `final_pred.csv`** (threshold 0.1589). Single seeds range 0.8363–0.8376 |
+| R3c | CatBoost, 15 signal features, 5 seeds | 0.8366 ± 0.0010 | −0.0002 | no |
+| R3d | mean(R3b, R3c) / nested-weight blend | 0.8375 / 0.8373 | < R3b | no |
+
+- The gain only just clears the reference fold std (0.0010) and is below its own (0.0014), so it is marginal. It is kept
+  because it is pure variance reduction (no new choices tuned on OOF) and **the tuned threshold becomes identical in every
+  fold (0.159, vs 0.157–0.165 for one seed)**, i.e. the decision rule is more stable for the private LB.
+- CatBoost stays ~0.001 behind LightGBM and blending it in dilutes the average. The ceiling (~0.838) is set by label noise
+  in the 5–15 report bucket (round 2).
+- `task1.ipynb` now scores everything with **binary** F2 (it still used macro). Test predictions: positive rate 0.617
+  (OOF 0.650; the LB-submitted binthr file had 0.617 too); 299 rows differ from `pred_lgbm_binthr.csv`. Expected LB
+  ≈ +0.0002. Not uploaded.
+
+### /ensemble after round 3 (2026-11-09, `python -m common.ensemble 1 ...`, all choices nested)
+8 models (lgbm_sig_5seed, lgbm, lgbm_nonoise, lgbm_fe, lgbm_qda_sig, cat_raw, cat_sig_5seed, logreg); tree models
+correlate 0.98–0.999, logreg 0.67. Simple mean 0.8362 ± 0.0017, hill climbing 0.8372 ± 0.0011, LR stacker on logits
+0.8379 ± 0.0013 vs best single lgbm_sig_5seed **0.8379 ± 0.0014** → nothing beats it; `final_pred.csv` unchanged.
+
+## Round 5 (autopilot, 2026-11-09): threshold under test-like missingness (`src/experiments_r5.py`)
+
+Test NaN rates differ a lot from train (headshot 2.7 → 14.1%, win_rate 4.9 → 13.7%, account_age 14.5 → 0.6%,
+friend_network 22.3 → 4.7%, …). Each validation fold of the round-3 model was also predicted after re-masking it to the
+test NaN rates (only columns where test has more NaN can be simulated; no test rows used).
+
+| Scoring | Binary F2 nested | thresholds |
+|---|---|---|
+| clean folds, clean threshold (round 3) | 0.8379 ± 0.0014 | 0.159 |
+| re-masked folds, clean threshold | 0.8372 ± 0.0009 | 0.159 |
+| re-masked folds, threshold tuned on re-masked OOF | 0.8371 ± 0.0011 | 0.159–0.161 |
+
+- **Not kept** (no gain). Useful conclusion for the audit: the extra test missingness costs only ≈ 0.0007 and the F2-optimal
+  threshold does not move (0.159 → 0.161; test positive rate 0.617 → 0.615), so the CV↔LB link for task 1 is robust.
+- 2026-11-11: 5-seed final (thr 0.1589) uploaded in sub_v19 together with task 3 two-stage and task 5 ID block: LB 0.76108; t1 + t3 together +0.00062 (predicted +0.0007).

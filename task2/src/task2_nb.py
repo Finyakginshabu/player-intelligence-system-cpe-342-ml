@@ -3,6 +3,8 @@
 #
 # - **Type:** 4-class classification, target `segment` (0 Casual, 1 Grinder, 2 Social, 3 Whale)
 # - **Metric:** F1 **macro**. Post-processing: per-class probability multipliers tuned on OOF (coordinate ascent).
+# - **Final model (round 4, 2026-11-09): naive Bayes with smoothed per-class densities** (section 4b), CV 0.7553
+#   vs 0.7525 for LightGBM + composites (sections 3-4, kept as the tree baseline).
 #
 # Final notebook: must run top-to-bottom. Source: `src/task2_nb.py` (jupytext percent format).
 # Experiments are logged in `experiments.md`.
@@ -27,6 +29,7 @@ from common import metrics, paths, utils
 
 sys.path.insert(0, str(ROOT / "task2" / "src"))
 from features import ENGAGE, SPEND, add_composites  # latent-axis composites (round 2)
+from nb import SmoothNB  # naive Bayes with smoothed per-class densities (round 4)
 
 TASK = 2
 utils.seed_everything()
@@ -152,16 +155,50 @@ print("per-class F1:", np.round(f1_score(y, pred_oof, average=None), 4))
 (importance / importance.sum()).sort_values(ascending=False).head(15).round(4)
 
 # %% [markdown]
-# ## 5. Final predictions
-# Fold-averaged test probabilities x OOF-tuned multipliers.
+# ## 4b. Naive Bayes with exact NaN marginalisation (round 4, 2026-11-09)
+# Within each segment the features are **uncorrelated** (max |Spearman| 0.02–0.05, mean 0.004–0.008; pooled up to
+# 0.16) and missingness is independent of the segment. So p(x | c) = Π_f p(x_f | c): naive Bayes is the correctly
+# specified model, the Bayes-optimal log-odds is additive, and a missing feature should be **skipped**, not imputed
+# (trees and the spline LR had to guess a value for the ~3.6 NaN per row).
+#
+# Per-class densities: continuous features on 128 equal-mass bins (a histogram on the empirical-CDF scale) with a
+# Gaussian smoother of 4 bins (a KDE in CDF space); discrete features and categoricals use frequency tables
+# (Laplace α = 1). Everything is fit on the training fold only. Bins/smoothing were picked from a small grid
+# (`src/experiments_r4.py`: 32 plain bins 0.7538, 128/σ2 0.7541, 128/σ4 **0.7553**, 128/σ8 0.7547, 256/σ8 0.7550).
 
 # %%
-test_label = (test_prob * W).argmax(1)
-print("OOF pred dist ", np.bincount(pred_oof, minlength=4) / len(pred_oof))
-print("test pred dist", np.bincount(test_label, minlength=4) / len(test_label))
+oof_nb, test_nb_cv, fold_nb = np.zeros((len(train), 4)), np.zeros((len(test), 4)), []
+t0 = time.time()
+for tr, va in FOLDS:
+    m = SmoothNB(CATS, 4, n_bins=128, sigma=4.0).fit(train.iloc[tr][FEATURES], y[tr])
+    oof_nb[va] = m.predict_proba(train.iloc[va][FEATURES])
+    test_nb_cv += m.predict_proba(test[FEATURES]) / len(FOLDS)
+    fold_nb.append(metrics.macro_f1(y[va], oof_nb[va].argmax(1)))
+utils.save_preds(TASK, "snb", oof_nb, test_nb_cv)
+nb_score = metrics.macro_f1(y, oof_nb.argmax(1))
+print(f"SmoothNB macro F1 {nb_score:.4f} (fold mean {np.mean(fold_nb):.4f} ± {np.std(fold_nb):.4f}), "
+      f"{time.time() - t0:.0f}s | folds {np.round(fold_nb, 4).tolist()}")
+print(f"LightGBM  macro F1 {raw_score:.4f} | per-fold gain of NB: {np.round(np.array(fold_nb) - np.array(fold_raw), 4).tolist()}")
+print("per-class F1 (NB):", np.round(f1_score(y, oof_nb.argmax(1), average=None), 4))
+
+# %% [markdown]
+# ## 5. Final predictions
+# Naive Bayes refit on all 104,000 training rows (it has no early stopping or tuned threshold, so nothing needs the
+# folds), argmax. The fold-averaged LightGBM probabilities stay saved as `test_lgbm_comp.npy` for comparison.
+
+# %%
+nb_full = SmoothNB(CATS, 4, n_bins=128, sigma=4.0).fit(train[FEATURES], y)
+test_prob_nb = nb_full.predict_proba(test[FEATURES])
+test_label = test_prob_nb.argmax(1)
+print("agreement full-fit NB vs fold-averaged NB on test:", round(float((test_label == test_nb_cv.argmax(1)).mean()), 4),
+      "| vs LightGBM:", round(float((test_label == (test_prob * W).argmax(1)).mean()), 4))
+print("OOF pred dist ", np.round(np.bincount(oof_nb.argmax(1), minlength=4) / len(y), 4))
+print("test pred dist", np.round(np.bincount(test_label, minlength=4) / len(test_label), 4))
 pd.DataFrame([{"model": "lgbm_comp", "macro_f1_argmax": raw_score, "macro_f1_nested_mult": np.mean(fold_nested),
                "fold_std": np.std(fold_nested), "macro_f1_full_mult": full_score, "weights": W.tolist(),
-               "best_iter_mean": np.mean(best_iters)}]).to_csv(OUT / "cv_results.csv", index=False)
+               "best_iter_mean": np.mean(best_iters)},
+              {"model": "snb (final)", "macro_f1_argmax": nb_score, "fold_std": np.std(fold_nb)}]
+             ).to_csv(OUT / "cv_results.csv", index=False)
 
 # %% [markdown]
 # ## 6. Write `outputs/final_pred.csv`

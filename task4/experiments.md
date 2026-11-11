@@ -52,3 +52,11 @@ Images `data/04_image_classification/data/{train,test}/{id}.jpg`, from the cours
    0.05% of test hashes appear in train. Group folds matter little for CV inflation here; keep them anyway.
 5. **Colour statistics differ by title:** 7-11k and roblock are brighter (mean RGB ≈ 0.47–0.48) than fiveN (0.41),
    pube and freefried (0.43). Global colour alone is a weak but real cue; the CNN features capture far more.
+
+## 2026-11-10: LB proof that the task-4 key is broken
+| Date | Change | CV score | LB score | Notes |
+|---|---|---|---|---|
+| 2026-11-10 | GPU ConvNeXt fine-tune (`final_pred_convnext_ft.csv`), **test.csv row order** (confirmed by the TA's mapping: ANS00001 = scyd5lz.jpg), **data-card ints** (confirmed visually from 50 train images per class) | 0.9835 | 0.75820 (Δ +0.0012 vs v16) | Task 4 ≈ 0.22 = chance. Earlier: the frozen model in the same order scored the same under the data-card (v1) and page (v2) numberings, which no working key allows (one of them should have been ≈ 0.6 higher on task 4). The task-4 answer key / scorer on Kaggle does not match these test images → TA |
+
+## 2026-11-11: professor's ruling — task 4 counts as 0
+The professor did not accept that the Kaggle task-4 key is broken, so task 4 counts as 0 for us. No further work on task 4; keep the ConvNeXt fine-tune column (CV 0.9835) in every file only so the submission stays valid. Report the CV result and the chance-level LB factually.

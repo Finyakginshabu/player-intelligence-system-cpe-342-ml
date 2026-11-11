@@ -1,0 +1,4 @@
+22:34:49 ..\data\04_image_classification | C:\DATA\CPE\CPE342\player-intelligence-system-cpe-342-ml\.venv-gpu\Scripts\python.exe | torch 2.14.1+cu130 | cuda NVIDIA GeForce RTX 5070 | epochs 1 batch 48 folds [0] limit 3000 workers 6
+22:35:26 fold 0 ep 0: loss 1.1834  val macro F1 0.7740  (32s, 75 img/s incl. val, peak mem 6.2 GB)
+22:35:43 fold 0: best-epoch F1 0.7740 | with TTA 0.7667
+22:35:43 smoke test: skipping test prediction and saving

@@ -1,5 +1,7 @@
 # %% [markdown]
-# # Task 4: Game Title Detection, GPU fine-tuning (local RTX / Kaggle / Colab)
+# # Task 4: Game Title Detection, GPU fine-tuning round 1 (local RTX / Kaggle / Colab)
+#
+# Superseded by `task4_final.ipynb` (round R, ConvNeXt-S on all images); kept for the report's history.
 #
 # - Pretrained **ConvNeXt-Tiny** (timm, ImageNet-22k → 1k), fine-tuned end-to-end. Pretrained weights are
 #   allowed for Task 4 only.
@@ -126,6 +128,13 @@ log(f"{DATA_DIR} | {sys.executable} | torch {torch.__version__} | {DEVICE} "
 # %%
 train = pd.read_csv(DATA_DIR / "train.csv")
 test = pd.read_csv(DATA_DIR / "test.csv")
+# TA data fix (2026-11-11): csvs are now id (PLY#/ANS#), file_name, label (int). Use the image name as the id and
+# rebuild the string class from the integer label, so the rest of the notebook is unchanged.
+for _df in (train, test):
+    if "file_name" in _df.columns:
+        _df["id"] = _df["file_name"].str.removesuffix(".jpg")
+if "label" in train.columns:
+    train["class"] = [LABELS[int(i)] for i in train["label"]]
 assert set(train["class"]) == set(LABELS), set(train["class"])
 y = train["class"].map({c: i for i, c in enumerate(LABELS)}).to_numpy()
 print(train.shape, test.shape)

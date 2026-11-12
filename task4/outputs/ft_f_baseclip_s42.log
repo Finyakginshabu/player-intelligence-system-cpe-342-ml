@@ -1,0 +1,7 @@
+00:43:15 === f_baseclip_s42: {'name': 'f_baseclip_s42', 'backbone': 'convnext_base.clip_laion2b_augreg_ft_in12k_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 32, 'lr': 0.0001, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+00:48:10 fold 0 ep 0: loss 0.7964  294s  3.1 GB
+00:52:57 fold 0 ep 1: loss 0.5877  286s  3.1 GB
+00:57:44 fold 0 ep 2: loss 0.5131  287s  3.1 GB
+01:02:33 fold 0 ep 3: loss 0.4535  289s  3.1 GB
+01:07:17 fold 0 ep 4: loss 0.4212  285s  3.1 GB
+01:12:00 fold 0 ep 5: loss 0.4060  283s  3.1 GB

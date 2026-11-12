@@ -1,0 +1,9 @@
+18:48:08 === h_small: {'name': 'h_small', 'backbone': 'convnext_small.fb_in22k_ft_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': False}
+18:50:52 fold 4 ep 0: loss 0.8079  val macro F1 0.7525  163s  9.8 GB
+18:54:11 fold 4 ep 1: loss 0.5008  val macro F1 0.8281  199s  9.8 GB
+19:04:14 fold 4 ep 2: loss 0.4470  val macro F1 0.8557  603s  9.8 GB
+19:14:40 fold 4 ep 3: loss 0.4216  val macro F1 0.8673  627s  9.8 GB
+19:25:33 fold 4 ep 4: loss 0.4050  val macro F1 0.8642  653s  9.8 GB
+19:36:04 fold 4 ep 5: loss 0.3995  val macro F1 0.8645  631s  9.8 GB
+19:36:58 fold 4: held-out macro F1 with TTA 0.8621  recall [0.623, 0.999, 0.965, 0.936, 0.993]
+19:36:58 === h_small [hard folds ['4']]: macro F1 mean 0.8621 +- 0.0000  [0.8621]

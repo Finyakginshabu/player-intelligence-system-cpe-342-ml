@@ -214,3 +214,11 @@ Data: `test.csv` 25,889 × 123 (`player_id`, 29 bases × 4 periods = 116 periodi
 ## 2026-11-11: player_id block banned by the professor
 The professor ruled that the `player_id` leak may not be used. `pred_idblock.csv` (in sub_v19) is withdrawn; the final task-5 file is the typed-only detector in `final_pred.csv` (8 types, 2,115 flags, LB t5 ≈ 0.988). The ID boundary may be mentioned in the report only as an observation, not as a method.
 - 2026-11-11: typed-only `final_pred.csv` is back in the best clean file (`submissions/sub_v20_clean_no_pid.csv`, LB 0.71608).
+
+## 2026-11-12: refreshed data (TA re-upload 2026-11-11)
+Test fully regenerated (same schema; the `player_id` boundary is gone: flag rate 7.6–8.7% in every id decile). All gap cut-offs still sit in the same empty gaps (e.g. ip_hash_entropy 0.200 | 0.300, behavior_stability 0.400 | 0.700); the notebook ran unchanged.
+
+| Date | Change | CV score | LB score | Notes |
+|---|---|---|---|---|
+| 2026-11-12 | 8 typed anomaly types, rerun on new data | – (no labels) | 0.84268 (sub_v22, with t2/t4 also changed) | 2,108 flags (8.14%): A 312, B 309, C 201, bot 207, low_activity 265, low_comm 263, low_stability 246, loc 8, erratic 297; zero overlap |
+| 2026-11-12 | Diagnostic: v22 with task 5 = 0 (sub_v23) | – | 0.64479 | **t5 = 0.989 on the new data** (= 5 × (0.84268 − 0.64479)) |

@@ -1,0 +1,7 @@
+00:21:21 === f_small_s2026: {'name': 'f_small_s2026', 'backbone': 'convnext_small.fb_in22k_ft_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 2026, 'grad_ckpt': True}
+00:24:45 fold 0 ep 0: loss 0.7934  203s  2.7 GB
+00:27:59 fold 0 ep 1: loss 0.5050  194s  2.7 GB
+00:31:13 fold 0 ep 2: loss 0.4498  194s  2.7 GB
+00:34:31 fold 0 ep 3: loss 0.4203  198s  2.7 GB
+00:37:47 fold 0 ep 4: loss 0.4070  196s  2.7 GB
+00:41:02 fold 0 ep 5: loss 0.4017  195s  2.7 GB

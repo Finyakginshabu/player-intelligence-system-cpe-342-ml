@@ -1,0 +1,9 @@
+22:57:37 === s_small: {'name': 's_small', 'backbone': 'convnext_small.fb_in22k_ft_in1k', 'cv': 'scene', 'folds': '1', 'epochs': 6, 'batch': 32, 'lr': 0.0001, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+23:00:29 fold 1 ep 0: loss 0.8526  val macro F1 0.8940 (non-dark 0.9247)  171s  2.1 GB
+23:03:11 fold 1 ep 1: loss 0.5018  val macro F1 0.8701 (non-dark 0.9149)  162s  2.1 GB
+23:05:53 fold 1 ep 2: loss 0.4493  val macro F1 0.9229 (non-dark 0.9623)  162s  2.1 GB
+23:08:35 fold 1 ep 3: loss 0.4249  val macro F1 0.9336 (non-dark 0.9627)  163s  2.1 GB
+23:11:17 fold 1 ep 4: loss 0.4108  val macro F1 0.9196 (non-dark 0.9645)  162s  2.1 GB
+23:14:00 fold 1 ep 5: loss 0.4043  val macro F1 0.9222 (non-dark 0.9641)  163s  2.1 GB
+23:14:30 fold 1: held-out macro F1 with TTA 0.9186 | non-dark 0.9619  recall [0.881, 0.869, 0.979, 0.989, 0.992]
+23:14:30 === s_small [scene folds ['1']]: macro F1 mean 0.9619 +- 0.0000  [0.9619]

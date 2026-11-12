@@ -4,7 +4,7 @@
 # - **Type:** 5-class image classification, 230×120 JPEG crops. **Metric:** macro F1. Pretrained models allowed.
 # - **This notebook = CPU fallback:** frozen ImageNet ConvNeXt-Tiny embeddings (`src/features.py`, cached)
 #   + logistic regression, 5-fold StratifiedGroupKFold (near-duplicate groups by average hash).
-#   The GPU fine-tuning version is `task4_kaggle.ipynb`.
+#   GPU fine-tuning: `task4_kaggle.ipynb` (round 1) and `task4_final.ipynb` (final, round R).
 # - **Labels:** train.csv holds strings; submitted integers follow the datacard
 #   `{7-11k:0, fiveN:1, freefried:2, pube:3, roblock:4}` (= alphabetical; see README "Conflicts").
 #
@@ -45,6 +45,13 @@ OUT = paths.outputs_dir(TASK)
 print(paths.datacard(TASK)[:420])
 train = pd.read_csv(DATA / "train.csv")
 test = pd.read_csv(DATA / "test.csv")
+# TA data fix (2026-11-11): csvs are now id (PLY#/ANS#), file_name, label (int). Use the image name as the id and
+# rebuild the string class from the integer label, so the rest of the notebook is unchanged.
+for _df in (train, test):
+    if "file_name" in _df.columns:
+        _df["id"] = _df["file_name"].str.removesuffix(".jpg")
+if "label" in train.columns:
+    train["class"] = [LABELS[int(i)] for i in train["label"]]
 assert set(train["class"]) == set(LABELS)
 y = train["class"].map({c: i for i, c in enumerate(LABELS)}).to_numpy()
 print("train", train.shape, "test", test.shape)
@@ -59,6 +66,9 @@ if not (f_tr.exists() and f_te.exists()):
     subprocess.run([sys.executable, str(ROOT / "task4/src/features.py"), "--backbone", BACKBONE], check=True)
 X, X_test = np.load(f_tr), np.load(f_te)
 meta_tr, meta_te = pd.read_csv(OUT / "img_meta_train.csv"), pd.read_csv(OUT / "img_meta_test.csv")
+# The cached test features follow the pre-2026-11-11 test.csv order: reorder them to the current test.csv (ANS) order.
+_pos = pd.Series(np.arange(len(meta_te)), index=meta_te["id"].astype(str).values).reindex(test["id"].astype(str)).to_numpy()
+X_test, meta_te = X_test[_pos], meta_te.iloc[_pos].reset_index(drop=True)
 assert (meta_tr["id"].astype(str).values == train["id"].astype(str).values).all()
 assert (meta_te["id"].astype(str).values == test["id"].astype(str).values).all()
 print(X.shape, X_test.shape)
@@ -111,10 +121,12 @@ print("per-class F1:", dict(zip(LABELS, f1_score(y, pred_oof, average=None).roun
 pd.DataFrame([{k: v for k, v in r.items() if k in ("name", "score", "std")} for r in runs]).to_csv(OUT / "cv_results.csv", index=False)
 
 # %% [markdown]
-# ## 5. Write `outputs/final_pred.csv` (integers 0–4, datacard order)
+# ## 5. Write `outputs/pred_lr_baseline.csv` (integers 0–4, datacard order)
+# Baseline only: the final task-4 file comes from `task4_final.ipynb` (fine-tuned ConvNeXt-S, round R).
 
 # %%
 test_label = best["pred"].argmax(1)
 print("test pred dist:", dict(zip(LABELS, np.bincount(test_label, minlength=5) / len(test_label))))
-final = utils.write_final_pred(TASK, test["id"], test_label)
+final = pd.DataFrame({"id": test["id"], "prediction": test_label.astype(int)})
+final.to_csv(OUT / "pred_lr_baseline.csv", index=False)
 final.head()

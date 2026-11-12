@@ -132,3 +132,10 @@ The professor ruled that the `player_id` leak may not be used. `pred_lgbm_pid.cs
 | Date | Change | CV score | LB score | Notes |
 |---|---|---|---|---|
 | 2026-11-11 | SmoothNB + per-class log-offsets (coordinate ascent on macro F1, nested: fit on 4 folds, scored on the 5th) | **0.7559 ± 0.0036** (folds 0.7554 / 0.7495 / 0.7567 / 0.7579 / 0.7600, every fold up vs argmax) | 0.71612 (sub_v21, with task 3 ms_cat; Δ +0.00004 vs v20) | Offsets [0, 0.1, 0.1, 0] in 4/5 folds (fold 4: [0, 0.15, 0.1, 0.05]), full-OOF fit [0, 0.1, 0.1, 0]: a small push towards Grinder and Social. +0.0006 < fold std, kept only as the last-upload polish; `final_pred.csv` unchanged (plain argmax). Test: 413 rows differ, class mix 0.417 / 0.250 / 0.193 / 0.140. File `outputs/pred_snb_offsets.csv` (fold-averaged test probabilities + offsets). Model-implied ceiling from the NB posteriors ≈ 0.761 (NB slightly overconfident: mean max-prob 0.776 vs accuracy 0.770), so ≤ +0.005 remains in principle |
+
+## 2026-11-12: refreshed data (TA re-upload 2026-11-11)
+Train + test fully regenerated (same schema and class mix; values per id uncorrelated with the old files). The `player_id` leak is gone (segment purity of 500-id blocks 0.970 → 0.394 = majority share). Old files kept in `data/_old_2026-11-08/`.
+
+| Date | Change | CV score | LB score | Notes |
+|---|---|---|---|---|
+| 2026-11-12 | SmoothNB (128 bins, σ 4), unchanged settings, rerun on new data | **0.7570 ± 0.0022** (folds 0.7536 / 0.7563 / 0.7573 / 0.7574 / 0.7603) | 0.84268 (sub_v22, with t4/t5 also changed) | LightGBM+composites 0.7537. Per-class offsets: nested 0.7569 (no gain) → final = plain NB `final_pred.csv` |

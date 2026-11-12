@@ -60,3 +60,58 @@ Images `data/04_image_classification/data/{train,test}/{id}.jpg`, from the cours
 
 ## 2026-11-11: professor's ruling — task 4 counts as 0
 The professor did not accept that the Kaggle task-4 key is broken, so task 4 counts as 0 for us. No further work on task 4; keep the ConvNeXt fine-tune column (CV 0.9835) in every file only so the submission stays valid. Report the CV result and the chance-level LB factually.
+
+## 2026-11-12: test.csv fixed by the TA → task 4 scores
+The TA's refreshed zip (Drive, 2026-11-11) has identical images but a new `test.csv` = `id` (ANS00001..), `file_name`, `label`, in a **different order** from the old test.csv (ANS00001 = sjqyfwc.jpg, not scyd5lz.jpg). Train labels are integers 0=7-11k … 4=roblock (same as our encoding). So the old chance-level LB was the wrong row mapping in the old test.csv, not our model. `make_submission.py` now maps task 4 via `file_name`.
+
+| Date | Change | CV score | LB score | Notes |
+|---|---|---|---|---|
+| 2026-11-12 | ConvNeXt FT predictions (unchanged) remapped through the new test.csv | 0.9835 | 0.84268 (sub_v22, +0.12656 vs v21 with t2/t5 also rerun) | implied t4+t5 ≈ 1.84 → t4 roughly 0.85–0.98. `task4_nb.py` still expects the old `id,class` csv format (needs a small update to rerun) |
+| 2026-11-12 | Diagnostic (sub_v23, task 5 zeroed) separates t4 from t5 | 0.9835 | – | **t4 ≈ 0.85 on the LB** (t5 = 0.989) → CV 0.98 vs LB 0.85: the train/test domain shift (adv. AUC 0.77, darker/noisier test) costs ~0.13. Next: shift-robust training (dark/noise/JPEG augmentation, more backbones, TTA), validated on degraded val images |
+
+## Round R (2026-11-12): robustness to unseen test scenes (`src/t4data.py`, `src/scene_cv.py`, `src/ft.py`)
+Goal: close the CV 0.98 → LB ≈ 0.85 gap. Rule 2 holds throughout: test images only pass through trained models.
+
+**Why random CV misses the gap.** Adversarial check on frozen CLIP ViT-L/14 embeddings: train-vs-test AUC 0.796; 12.6% of
+test rows look test-only (p > 0.9) vs 0.4% of train. The most test-like frames are a scene type barely in train (large
+crowds of uniformed characters at night). Model confidence drops as test-likeness rises (0.82 → 0.76). The distortions
+(rotation, corner borders, noise level) are the same in both splits (measured on 6,000 images each), so it is
+content shift, not a distortion shift.
+
+**New validation.** Scenes = k-means clusters of CLIP embeddings inside each class. `scene` folds (k = 10, grouped) and
+`hard` folds (k = 5, fold i holds out the i-th largest region of every class). Frozen CLIP-L linear probe: random 0.881,
+scene 0.744, hard 0.667. CLIP zero-shot with the real game names is useless (macro F1 0.13). Near-black frames
+(max-channel mean < 25: 1.6% of train, 89% 7-11k; 0.8% of test) carry no game content: holding out the cluster that
+contains them makes 7-11k recall collapse (fold 4: 0.61), which is not what test does, so models are compared on
+**non-dark** held-out rows.
+
+| Date | Model (6 epochs, scene/hard fold, no test preds) | held-out macro F1 all / non-dark | Notes |
+|---|---|---|---|
+| 2026-11-12 | ConvNeXt-T in22k, current recipe, scene folds 0, 1 | 0.964 / 0.965, 0.904 / 0.947 | baseline |
+| 2026-11-12 | ConvNeXt-T, hard folds 2, 4 | 0.965 / 0.966, 0.844 / 0.926 | fold 4 = benchmark |
+| 2026-11-12 | ConvNeXt-T + heavy aug (mixup/cutmix 0.5, erase 0.3, gray 0.2, hue 0.5, invert 0.2, scale ≥ 0.5), hard fold 4 | 0.844 / 0.924 | no gain → heavier augmentation is not the lever |
+| 2026-11-12 | **ConvNeXt-S in22k**, hard fold 4 | 0.862 / **0.949** | +0.023 non-dark vs T: capacity helps |
+| 2026-11-12 | CLIP ViT-B/16 openai (lr 5e-5, layer decay 0.7), hard fold 4 | 0.830 / 0.912 | worse |
+| 2026-11-12 | DINOv3 ViT-B/16 (lr 5e-5, layer decay 0.75), hard fold 4 | 0.844 / 0.925 | = T |
+| 2026-11-12 | mean of the 5 fold-4 models above | 0.858 / – | averaging < best single (S) |
+| 2026-11-12 | Class-prior correction p / prior^τ on held-out OOF (equal-mix re-weighting) | τ 0 best or flat | no gain → not used |
+| 2026-11-12 | ConvNeXt-B in22k (lr 1e-4), hard fold 4 | 0.844 / 0.9295 | bigger than S but worse |
+| 2026-11-12 | ConvNeXt-B CLIP LAION-2B ft in12k/in1k (lr 1e-4), hard fold 4 | 0.849 / 0.9315 | 2nd best; blend with S 0.9485 = S alone |
+
+**Decision:** ConvNeXt-S in22k is the best on held-out scenes (also scene fold 1: 0.962 non-dark vs T 0.947). Final =
+ConvNeXt-S trained on **all** 31,546 images (`--cv full`, 6 epochs, batch 48, lr 2e-4, drop-path 0.2), **4 seeds**
+(42, 7, 123, 2026), probabilities averaged. Second candidate = that average 50/50 with one ConvNeXt-B CLIP model (seed 42).
+Notebook: `task4_final.ipynb` (source `src/task4_final_nb.py`).
+
+**Final runs (2026-11-12/13, RTX 5070, ≈ 22 min per Small seed, 47 min for Base CLIP).** Last-epoch train loss 0.401–0.403 for
+all Small seeds, 0.406 for Base CLIP. On test: the 4 seeds agree pairwise on only 88.6–88.9% of rows (all 4 unanimous on
+81.0%), with disagreements spread over every class pair → large seed variance on the unseen test scenes, which the
+average reduces. Ensemble vs round-1 ConvNeXt-T (LB ≈ 0.85): 90.9% agreement, 2,350 rows changed. Mean max-prob 0.839
+(round 1: 0.801). Test class mix (final): 7-11k 0.177, fiveN 0.254, freefried 0.145, pube 0.262, roblock 0.162 (train:
+0.394 / 0.140 / 0.177 / 0.188 / 0.101; the round-1 model gives almost the same test mix, so this is the test set, not
+the model). The blend with Base CLIP changes 2,241 rows vs the Small-only file.
+
+| Date | File | Model | held-out (hard 4, non-dark) | LB |
+|---|---|---|---|---|
+| 2026-11-13 | `outputs/final_pred.csv` → `submissions/sub_v24_t4_small4.csv` | ConvNeXt-S × 4 seeds, all data | 0.949 (single seed) | not uploaded yet |
+| 2026-11-13 | `outputs/pred_small4_baseclip.csv` → `submissions/sub_v25_t4_small4_clip.csv` | 0.5 · S × 4 + 0.5 · B-CLIP | 0.9485 (single seeds) | not uploaded yet |

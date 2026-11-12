@@ -1,0 +1,7 @@
+23:37:25 === f_small_s7: {'name': 'f_small_s7', 'backbone': 'convnext_small.fb_in22k_ft_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 7, 'grad_ckpt': True}
+23:40:50 fold 0 ep 0: loss 0.8004  204s  2.7 GB
+23:44:08 fold 0 ep 1: loss 0.5020  198s  2.7 GB
+23:47:24 fold 0 ep 2: loss 0.4517  196s  2.7 GB
+23:50:39 fold 0 ep 3: loss 0.4234  195s  2.7 GB
+23:53:55 fold 0 ep 4: loss 0.4076  196s  2.7 GB
+23:57:09 fold 0 ep 5: loss 0.4019  194s  2.7 GB

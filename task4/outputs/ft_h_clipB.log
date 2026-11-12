@@ -1,0 +1,9 @@
+19:37:04 === h_clipB: {'name': 'h_clipB', 'backbone': 'vit_base_patch16_clip_224.openai', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 32, 'lr': 5e-05, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.1, 'layer_decay': 0.7, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': False}
+19:40:03 fold 4 ep 0: loss 1.0348  val macro F1 0.7048  177s  5.6 GB
+19:42:59 fold 4 ep 1: loss 0.6009  val macro F1 0.7951  176s  5.6 GB
+19:45:55 fold 4 ep 2: loss 0.5300  val macro F1 0.7905  176s  5.6 GB
+19:48:50 fold 4 ep 3: loss 0.4873  val macro F1 0.8114  176s  5.6 GB
+19:51:47 fold 4 ep 4: loss 0.4628  val macro F1 0.8201  177s  5.6 GB
+19:54:47 fold 4 ep 5: loss 0.4521  val macro F1 0.8293  180s  5.6 GB
+19:55:09 fold 4: held-out macro F1 with TTA 0.8304  recall [0.598, 1.0, 0.899, 0.871, 1.0]
+19:55:09 === h_clipB [hard folds ['4']]: macro F1 mean 0.8304 +- 0.0000  [0.8304]

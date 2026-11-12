@@ -1,0 +1,16 @@
+17:54:51 === s_cnxt_t_base: {'name': 's_cnxt_t_base', 'backbone': 'convnext_tiny.fb_in22k_ft_in1k', 'cv': 'scene', 'folds': '0,1', 'epochs': 6, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.1, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': False}
+17:56:25 fold 0 ep 0: loss 0.9106  val macro F1 0.9095  94s  6.2 GB
+17:57:50 fold 0 ep 1: loss 0.5344  val macro F1 0.9367  85s  6.2 GB
+17:59:15 fold 0 ep 2: loss 0.4733  val macro F1 0.9518  85s  6.2 GB
+18:00:39 fold 0 ep 3: loss 0.4360  val macro F1 0.9609  85s  6.2 GB
+18:02:04 fold 0 ep 4: loss 0.4158  val macro F1 0.9681  85s  6.2 GB
+18:03:30 fold 0 ep 5: loss 0.4067  val macro F1 0.9677  85s  6.2 GB
+18:03:48 fold 0: held-out macro F1 with TTA 0.9643  recall [0.978, 0.973, 0.98, 0.983, 0.886]
+18:05:13 fold 1 ep 0: loss 0.9152  val macro F1 0.8515  84s  6.2 GB
+18:06:36 fold 1 ep 1: loss 0.5329  val macro F1 0.9122  83s  6.2 GB
+18:08:00 fold 1 ep 2: loss 0.4673  val macro F1 0.9179  84s  6.2 GB
+18:09:24 fold 1 ep 3: loss 0.4319  val macro F1 0.9334  84s  6.2 GB
+18:10:47 fold 1 ep 4: loss 0.4148  val macro F1 0.9187  83s  6.2 GB
+18:12:10 fold 1 ep 5: loss 0.4084  val macro F1 0.9152  83s  6.2 GB
+18:12:30 fold 1: held-out macro F1 with TTA 0.9037  recall [0.875, 0.823, 0.964, 0.99, 0.994]
+18:12:30 === s_cnxt_t_base [scene folds ['0', '1']]: macro F1 mean 0.9340 +- 0.0303  [0.9643, 0.9037]

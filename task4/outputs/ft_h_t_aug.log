@@ -1,0 +1,9 @@
+18:38:30 === h_t_aug: {'name': 'h_t_aug', 'backbone': 'convnext_tiny.fb_in22k_ft_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.1, 'layer_decay': 1.0, 'mix': 0.5, 'hue': 0.5, 'gray': 0.2, 'invert': 0.2, 'scale_min': 0.5, 'erase': 0.3, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': False}
+18:40:11 fold 4 ep 0: loss 1.1171  val macro F1 0.7536  101s  6.2 GB
+18:41:42 fold 4 ep 1: loss 0.7985  val macro F1 0.8166  91s  6.2 GB
+18:43:15 fold 4 ep 2: loss 0.7225  val macro F1 0.8495  93s  6.2 GB
+18:44:46 fold 4 ep 3: loss 0.6770  val macro F1 0.8528  92s  6.2 GB
+18:46:18 fold 4 ep 4: loss 0.6495  val macro F1 0.8552  92s  6.2 GB
+18:47:50 fold 4 ep 5: loss 0.6225  val macro F1 0.8506  92s  6.2 GB
+18:48:03 fold 4: held-out macro F1 with TTA 0.8444  recall [0.623, 1.0, 0.918, 0.89, 0.995]
+18:48:03 === h_t_aug [hard folds ['4']]: macro F1 mean 0.8444 +- 0.0000  [0.8444]

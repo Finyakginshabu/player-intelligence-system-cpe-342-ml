@@ -37,8 +37,15 @@ def test_ids(n: int) -> pd.Series:
     if not path.exists():
         raise SubmissionError(f"[task{n}] {path} not found")
     df = pd.read_csv(path, dtype=str)
-    col = "player_id" if "player_id" in df.columns else "id"
-    ids = df[col]
+    if "file_name" in df.columns:
+        # Task 4 after the 2026-11-11 data fix: test.csv = id (ANS#####), file_name ({image id}.jpg), label.
+        # Predictions are keyed by image id, so map through file_name and check id is the ANS sequence.
+        expected = [f"ANS{k + 1:05d}" for k in range(len(df))]
+        if df["id"].tolist() != expected:
+            raise SubmissionError(f"[task{n}] test.csv id column is not ANS00001..ANS{len(df):05d} in order")
+        ids = df["file_name"].str.removesuffix(".jpg")
+    else:
+        ids = df["player_id" if "player_id" in df.columns else "id"]
     if len(ids) != N_ROWS or ids.duplicated().any():
         raise SubmissionError(f"[task{n}] test.csv must have {N_ROWS} unique ids, got {len(ids)} ({ids.nunique()} unique)")
     return ids.reset_index(drop=True)

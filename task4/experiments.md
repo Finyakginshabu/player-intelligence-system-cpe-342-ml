@@ -214,3 +214,16 @@ the gain comes from V2-B; mixing it with S is neutral on this fold but kept for 
 **Conclusion:** no train-only breakthrough found. Reaching t4 ≈ 0.926 (#1) means fixing about a third of the errors on the
 unsure 18% of test frames; the standard tools for that (pseudo-labels, test-time adaptation, test-prior estimation) all
 adapt to test images and are banned by rule 2. Legal levers left are incremental: more seeds, stronger per-image TTA.
+
+### Breakthrough analysis, part 2 (2026-11-13 evening; nothing fitted on test, no prediction changed)
+| Hypothesis | Test | Result |
+|---|---|---|
+| Test distortions differ (→ canonicalise images before predicting) | per-image black/white corners (rotation, inversion), saturation, noise energy, colour balance, train vs test | **rejected**: identical (black-corner counts 0.526/0.110/0.336 vs 0.528/0.109/0.334; noise quantiles equal; dominant channel ⅓ each). Test frames are only slightly more saturated = content |
+| Family gains are class- or scene-specific | aggregate class flow of the rows our own submissions changed | v24→v26 (+0.017): 1,524 rows over all class pairs, only 16% in the most test-like 10%; net flow towards roblock (+215) / freefried (+119), away from pube (−172) / fiveN (−150). v26→v27 (−0.012): 1,215 rows, CLIP pushes towards 7-11k (+137) / pube (+70). **Both broad**: the backbone changes behaviour everywhere, not on one scene |
+| Something systematic in the test predictions | class mix | all models predict 7-11k ≈ 0.18–0.20 on test vs 0.394 in train → the test mix really differs (no model drifts towards the train prior) |
+
+**Reading:** the decisive factor is the backbone's pretraining, and its effect on the test is broad, while held-out can barely
+see it (V2-B: held-out +0.006, LB +0.017; B-CLIP: held-out ±0, LB −0.012). Masked-image pretraining (FCMAE) helped,
+image-text pretraining (CLIP) hurt. → Search over pretrainings with the LB as a yes/no judge, one family per upload,
+equal-weight recipes only, keep only clear gains (> 0.002 LB). Candidates (all masked-image pretrained): ConvNeXt-V2-L
+(FCMAE), Hiera-B (MAE), EVA-02-B (MIM in22k). Also "V2-B × 4 alone" as a natural test of whether S still adds anything.

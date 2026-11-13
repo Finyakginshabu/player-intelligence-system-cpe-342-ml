@@ -56,6 +56,10 @@ p.add_argument("--limit", type=int, default=0, help="smoke test: use this many t
 p.add_argument("--seed", type=int, default=42)
 p.add_argument("--grad-ckpt", action="store_true")
 p.add_argument("--init", default="", help="encoder state dict loaded after creating the model (e.g. outputs/mim_<name>.pt)")
+p.add_argument("--pl", default="", help="KAGGLE-ONLY pseudo-labels from teacher probabilities: with --cv full a test_*.npy "
+               "(confident TEST rows are added to training); with hard/scene CV an oof_*.npy (confident HELD-OUT rows are "
+               "added with the teacher's labels = simulation of the test case)")
+p.add_argument("--pl-thr", type=float, default=0.9, help="min teacher max-probability for a pseudo-labelled row")
 A = p.parse_args()
 
 DEV = "cuda"
@@ -215,7 +219,31 @@ def predict(model, X, idx=None, zooms=(1.0, 1.08, 1.15)):
     return out.cpu().numpy()
 
 
+def pl_pool(tr, va):
+    """Training pool (images, labels, row indices). Without --pl: the train images. KAGGLE-ONLY with --pl: + pseudo-labels."""
+    if not A.pl:
+        return Xtr, y_all, tr
+    assert A.scene_balance == 0, "--pl and --scene-balance are not combined"
+    teach = np.load(A.pl)
+    if A.cv == "full":
+        sel = np.where(teach.max(1) >= A.pl_thr)[0]
+        Xp = torch.cat([Xtr, Xte[torch.as_tensor(sel)]])
+        yp = np.concatenate([y_all, teach[sel].argmax(1)])
+        trp = np.concatenate([tr, len(Xtr) + np.arange(len(sel))])
+        log(f"pseudo-labels: {len(sel)} test rows ({len(sel) / len(teach):.1%}) at conf >= {A.pl_thr}, "
+            f"class mix {np.round(np.bincount(yp[len(Xtr):], minlength=5) / len(sel), 3).tolist()}")
+    else:
+        sel = va[teach[va].max(1) >= A.pl_thr]
+        Xp, yp = Xtr, y_all.copy()
+        yp[sel] = teach[sel].argmax(1)
+        trp = np.concatenate([tr, sel])
+        log(f"pseudo-labels (simulation): {len(sel)} of {len(va)} held-out rows at conf >= {A.pl_thr}, "
+            f"teacher accuracy on them {(yp[sel] == y_all[sel]).mean():.4f}")
+    return Xp, yp, trp
+
+
 def train_fold(k, tr, va):
+    Xp, yp, tr = pl_pool(tr, va)
     model = make_model()
     if A.layer_decay < 1:
         from timm.optim import create_optimizer_v2
@@ -226,14 +254,14 @@ def train_fold(k, tr, va):
     total = A.epochs * steps_per_epoch
     max_lrs = [g["lr"] * g.get("lr_scale", 1.0) for g in opt.param_groups]  # timm stores layer decay as lr_scale
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=max_lrs, total_steps=total, pct_start=0.1, anneal_strategy="cos")
-    counts = np.bincount(y_all[tr], minlength=5)
+    counts = np.bincount(yp[tr], minlength=5)
     cw = torch.tensor((counts.max() / counts) ** A.balance, dtype=torch.float32, device=DEV)
     scaler = torch.amp.GradScaler("cuda")
     ema = None
     if A.ema > 0:
         from timm.utils import ModelEmaV3
         ema = ModelEmaV3(model, decay=A.ema, use_warmup=True)
-    ytr = torch.as_tensor(y_all)
+    ytr = torch.as_tensor(yp)
     scene_p = None
     if A.scene_balance > 0:
         import scene_cv
@@ -255,7 +283,7 @@ def train_fold(k, tr, va):
             perm = torch.as_tensor(np.random.permutation(tr))
         for b in range(steps_per_epoch):
             bi = perm[b * A.batch:(b + 1) * A.batch]
-            x = train_tf(Xtr[bi])
+            x = train_tf(Xp[bi])
             y1h = F.one_hot(ytr[bi].to(DEV), 5).float()
             y1h = y1h * (1 - A.smooth) + A.smooth / 5
             if A.mix > 0 and np.random.rand() < A.mix:

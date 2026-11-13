@@ -227,3 +227,5 @@ see it (V2-B: held-out +0.006, LB +0.017; B-CLIP: held-out ±0, LB −0.012). Ma
 image-text pretraining (CLIP) hurt. → Search over pretrainings with the LB as a yes/no judge, one family per upload,
 equal-weight recipes only, keep only clear gains (> 0.002 LB). Candidates (all masked-image pretrained): ConvNeXt-V2-L
 (FCMAE), Hiera-B (MAE), EVA-02-B (MIM in22k). Also "V2-B × 4 alone" as a natural test of whether S still adds anything.
+- **Unused-fold confirmation (audit item 2, hard fold 3, non-dark):** S 0.9622, **V2-B 0.9696 (+0.0074)**, S+V2 0.9704 → the
+  v26 recipe holds on a fold never used for any choice. EMA (decay 0.998) on fold 4: 0.9468 vs 0.9492 → no gain, not used.

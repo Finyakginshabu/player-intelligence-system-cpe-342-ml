@@ -44,7 +44,10 @@ p.add_argument("--invert", type=float, default=0.05)
 p.add_argument("--scale-min", type=float, default=0.75, help="min area fraction of the random crop")
 p.add_argument("--erase", type=float, default=0.0, help="probability of erasing one random box")
 p.add_argument("--balance", type=float, default=0.5, help="class weight = (max count / count) ** balance")
-p.add_argument("--ema", type=float, default=0.0, help="EMA decay of weights (0 = off); EMA weights are used for prediction")
+p.add_argument("--scene-balance", type=float, default=0.0,
+               help="sample train rows with weight (scene size) ** -alpha within each class (0 = off)")
+p.add_argument("--scene-k", type=int, default=10, help="CLIP k-means scenes per class used by --scene-balance")
+p.add_argument("--ema",type=float, default=0.0, help="EMA decay of weights (0 = off); EMA weights are used for prediction")
 p.add_argument("--smooth", type=float, default=0.1)
 p.add_argument("--no-test", action="store_true")
 p.add_argument("--limit", type=int, default=0, help="smoke test: use this many train rows")
@@ -210,11 +213,25 @@ def train_fold(k, tr, va):
         from timm.utils import ModelEmaV3
         ema = ModelEmaV3(model, decay=A.ema, use_warmup=True)
     ytr = torch.as_tensor(y_all)
+    scene_p = None
+    if A.scene_balance > 0:
+        import scene_cv
+        g = scene_cv.scene_groups(A.scene_k)[tr]
+        _, inv, gcnt = np.unique(g, return_inverse=True, return_counts=True)
+        w = gcnt[inv].astype(float) ** -A.scene_balance
+        ycls = y_all[tr]
+        for c in range(5):  # keep each class's total sampling mass = its share of the training rows
+            m = ycls == c
+            w[m] *= m.sum() / w[m].sum()
+        scene_p = w / w.sum()
     step = 0
     for ep in range(A.epochs):
         model.train()
         t0, tot = time.time(), 0.0
-        perm = torch.as_tensor(np.random.permutation(tr))
+        if A.scene_balance > 0:  # rare train scenes drawn more often (with replacement), class shares unchanged
+            perm = torch.as_tensor(np.random.choice(tr, len(tr), replace=True, p=scene_p))
+        else:
+            perm = torch.as_tensor(np.random.permutation(tr))
         for b in range(steps_per_epoch):
             bi = perm[b * A.batch:(b + 1) * A.batch]
             x = train_tf(Xtr[bi])

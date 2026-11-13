@@ -1,0 +1,9 @@
+06:35:47 === h_v2large: {'name': 'h_v2large', 'backbone': 'convnextv2_large.fcmae_ft_in22k_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 16, 'lr': 6e-05, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+06:51:54 fold 4 ep 0: loss 0.7055  val macro F1 0.8158 (non-dark 0.8992)  949s  5.1 GB
+07:07:31 fold 4 ep 1: loss 0.4542  val macro F1 0.8510 (non-dark 0.9212)  937s  5.1 GB
+07:23:08 fold 4 ep 2: loss 0.4249  val macro F1 0.8804 (non-dark 0.9444)  937s  5.1 GB
+07:38:44 fold 4 ep 3: loss 0.4066  val macro F1 0.8724 (non-dark 0.9400)  937s  5.1 GB
+07:54:21 fold 4 ep 4: loss 0.3940  val macro F1 0.8611 (non-dark 0.9428)  936s  5.1 GB
+08:09:58 fold 4 ep 5: loss 0.3935  val macro F1 0.8654 (non-dark 0.9480)  937s  5.1 GB
+08:11:20 fold 4: held-out macro F1 with TTA 0.8588 | non-dark 0.9442  recall [0.622, 1.0, 0.947, 0.927, 1.0]
+08:11:20 === h_v2large [hard folds ['4']]: macro F1 mean 0.9442 +- 0.0000  [0.9442]

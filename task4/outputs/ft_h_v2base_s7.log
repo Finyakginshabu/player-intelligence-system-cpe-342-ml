@@ -1,0 +1,9 @@
+08:12:07 === h_v2base_s7: {'name': 'h_v2base_s7', 'backbone': 'convnextv2_base.fcmae_ft_in22k_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 32, 'lr': 0.0001, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 7, 'grad_ckpt': True}
+08:21:29 fold 4 ep 0: loss 0.7409  val macro F1 0.7542 (non-dark 0.8094)  561s  4.2 GB
+08:30:49 fold 4 ep 1: loss 0.4799  val macro F1 0.8937 (non-dark 0.9263)  560s  4.2 GB
+08:40:01 fold 4 ep 2: loss 0.4289  val macro F1 0.8528 (non-dark 0.9341)  552s  4.2 GB
+08:49:13 fold 4 ep 3: loss 0.4046  val macro F1 0.8640 (non-dark 0.9500)  552s  4.2 GB
+08:58:24 fold 4 ep 4: loss 0.3961  val macro F1 0.8691 (non-dark 0.9528)  551s  4.2 GB
+09:07:34 fold 4 ep 5: loss 0.3929  val macro F1 0.8701 (non-dark 0.9538)  551s  4.2 GB
+09:08:24 fold 4: held-out macro F1 with TTA 0.8660 | non-dark 0.9504  recall [0.636, 1.0, 0.963, 0.929, 0.998]
+09:08:24 === h_v2base_s7 [hard folds ['4']]: macro F1 mean 0.9504 +- 0.0000  [0.9504]

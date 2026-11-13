@@ -7,12 +7,13 @@
 #   scene types that are rare in train (adversarial AUC 0.80 on CLIP embeddings), so random folds overstate accuracy.
 # - **Validation used here:** scenes = k-means clusters of CLIP ViT-L/14 embeddings inside each class; whole scenes are
 #   held out (`src/scene_cv.py`). Near-black frames (no game content, 0.8% of test) are excluded from the comparison.
-# - **Final:** ConvNeXt-S (ImageNet-22k) fine-tuned on **all** training images, 4 seeds, probabilities averaged
-#   (`src/ft.py --cv full`). Second candidate: the same plus one ConvNeXt-B (CLIP LAION-2B) model, 50/50.
+# - **Final:** 0.5 · ConvNeXt-S (ImageNet-22k) × 4 seeds + 0.5 · ConvNeXt-V2-B (FCMAE, ImageNet-22k) × 2 seeds, each
+#   fine-tuned on **all** training images (`src/ft.py --cv full`), probabilities averaged. ConvNeXt-S alone (= v24, LB
+#   0.84731) is kept as `outputs/pred_small4.csv`; the V2 blend adds +0.006 on held-out scenes (two V2 seeds, both up).
 # - Test images only ever pass through the trained networks (no fitting on test, project rule 2).
 #
 # Training runs on the GPU venv (`.venv-gpu`) via `src/ft.py`; this notebook collects the saved results. Set
-# `RETRAIN = True` to rerun every training command (≈ 2.5 h on an RTX 5070).
+# `RETRAIN = True` to rerun every training command (≈ 5 h on an RTX 5070: S ≈ 22 min × 4, V2-B ≈ 67 min × 2, B-CLIP ≈ 47 min).
 # Source: `src/task4_final_nb.py` (jupytext percent format).
 
 # %%
@@ -42,6 +43,8 @@ SEEDS = [42, 7, 123, 2026]
 SMALL = "--backbone convnext_small.fb_in22k_ft_in1k --epochs 6 --batch 48 --lr 2e-4 --drop-path 0.2 --grad-ckpt"
 BASECLIP = ("--backbone convnext_base.clip_laion2b_augreg_ft_in12k_in1k --epochs 6 --batch 32 --lr 1e-4 "
             "--drop-path 0.2 --grad-ckpt")
+V2_SEEDS = [42, 7]
+V2BASE = "--backbone convnextv2_base.fcmae_ft_in22k_in1k --epochs 6 --batch 32 --lr 1e-4 --drop-path 0.2 --grad-ckpt"
 
 # %% [markdown]
 # ## 1. Data (TA's fixed csv format: `id`, `file_name`, `label`)
@@ -59,7 +62,10 @@ print(pd.Series(y).value_counts(normalize=True).sort_index().rename(dict(enumera
 # %%
 nondark = np.load(OUT / "bright_train.npy") >= 25
 bench = {"h_cnxt_t_base": "ConvNeXt-T in22k (round-1 recipe)", "h_t_aug": "ConvNeXt-T + heavy augmentation",
-         "h_small": "ConvNeXt-S in22k", "h_base22k": "ConvNeXt-B in22k", "h_baseclip": "ConvNeXt-B CLIP LAION-2B",
+         "h_small": "ConvNeXt-S in22k", "h_small_s7": "ConvNeXt-S in22k, seed 7", "h_small_e10": "ConvNeXt-S, 10 epochs",
+         "h_small384_hr": "ConvNeXt-S 384 weights, 288x576 input", "h_small_in12k": "ConvNeXt-S in12k",
+         "h_small_dinov3": "ConvNeXt-S DINOv3", "h_base22k": "ConvNeXt-B in22k", "h_baseclip": "ConvNeXt-B CLIP LAION-2B",
+         "h_v2base": "ConvNeXt-V2-B FCMAE in22k", "h_v2base_s7": "ConvNeXt-V2-B, seed 7", "h_v2large": "ConvNeXt-V2-L",
          "h_dinov3B": "DINOv3 ViT-B/16", "h_clipB": "CLIP ViT-B/16"}
 import scene_cv  # noqa: E402
 from sklearn.metrics import f1_score  # noqa: E402
@@ -73,6 +79,13 @@ for name, desc in bench.items():
         p = np.load(f)
         rows.append({"model": desc, "all held-out": f1_score(y[va], p[va].argmax(1), average="macro"),
                      "non-dark held-out": f1_score(y[va_nd], p[va_nd].argmax(1), average="macro")})
+o = lambda n: np.load(OUT / f"oof_{n}.npy")  # noqa: E731
+blends = {"S (2 seeds)": (o("h_small") + o("h_small_s7")) / 2}
+blends["V2-B (2 seeds)"] = (o("h_v2base") + o("h_v2base_s7")) / 2
+blends["0.5 S + 0.5 V2-B (final recipe)"] = (blends["S (2 seeds)"] + blends["V2-B (2 seeds)"]) / 2
+for name, p in blends.items():
+    rows.append({"model": "blend: " + name, "all held-out": f1_score(y[va], p[va].argmax(1), average="macro"),
+                 "non-dark held-out": f1_score(y[va_nd], p[va_nd].argmax(1), average="macro")})
 pd.DataFrame(rows).sort_values("non-dark held-out", ascending=False).round(4)
 
 # %% [markdown]
@@ -83,30 +96,40 @@ if RETRAIN:
     for s in SEEDS:
         subprocess.run(f'"{GPU_PY}" ft.py --name f_small_s{s} --cv full --seed {s} {SMALL}', shell=True, check=True,
                        cwd=ROOT / "task4" / "src")
+    for s in V2_SEEDS:
+        subprocess.run(f'"{GPU_PY}" ft.py --name f_v2base_s{s} --cv full --seed {s} {V2BASE}', shell=True, check=True,
+                       cwd=ROOT / "task4" / "src")
     subprocess.run(f'"{GPU_PY}" ft.py --name f_baseclip_s42 --cv full --seed 42 {BASECLIP}', shell=True, check=True,
                    cwd=ROOT / "task4" / "src")
 small = [np.load(OUT / f"test_f_small_s{s}.npy") for s in SEEDS]
 p_small = np.mean(small, 0)
-print("seeds:", len(small), "| pairwise argmax agreement between seeds:",
+v2 = [np.load(OUT / f"test_f_v2base_s{s}.npy") for s in V2_SEEDS]
+p_v2 = np.mean(v2, 0)
+print("S seeds:", len(small), "| pairwise argmax agreement between seeds:",
       np.round([(small[i].argmax(1) == small[j].argmax(1)).mean() for i in range(len(small)) for j in range(i + 1, len(small))], 4))
+print("V2-B seeds:", len(v2), "| agreement:", round(float((v2[0].argmax(1) == v2[1].argmax(1)).mean()), 4),
+      "| S vs V2-B agreement:", round(float((p_small.argmax(1) == p_v2.argmax(1)).mean()), 4))
 
 # %% [markdown]
-# ## 4. Write `outputs/final_pred.csv` (id = image name, integers 0–4) + the blend candidate
+# ## 4. Write `outputs/final_pred.csv` (id = image name, integers 0–4) + the alternatives
 
 # %%
-pred = p_small.argmax(1)
+p_final = 0.5 * p_small + 0.5 * p_v2
+pred = p_final.argmax(1)
 final = utils.write_final_pred(TASK, test["stem"], pred)
+np.save(OUT / "test_blend_s4_v2b2.npy", p_final)
 np.save(OUT / "test_final_small4.npy", p_small)
+pd.DataFrame({"id": test["stem"], "prediction": p_small.argmax(1)}).to_csv(OUT / "pred_small4.csv", index=False)
+print("final vs ConvNeXt-S alone (v24): rows that differ", int((pred != p_small.argmax(1)).sum()))
 old = t4data.old_test_order_to_new(np.load(OUT / "test_convnext_ft.npy"))  # round-1 model, in ANS order
 print("agreement with the round-1 ConvNeXt-T (LB ≈ 0.85):", round(float((pred == old.argmax(1)).mean()), 4))
 print("mean max-prob: final", round(float(p_small.max(1).mean()), 3), "| round 1", round(float(old.max(1).mean()), 3))
 mix = pd.DataFrame({"train labels": np.bincount(y, minlength=5) / len(y),
                     "round-1 test preds": np.bincount(old.argmax(1), minlength=5) / len(old),
+                    "S only test preds": np.bincount(p_small.argmax(1), minlength=5) / len(pred),
                     "final test preds": np.bincount(pred, minlength=5) / len(pred)}, index=LABELS)
 f_clip = OUT / "test_f_baseclip_s42.npy"
-if f_clip.exists():
+if f_clip.exists():  # older alternative (S + B-CLIP = S alone on held-out scenes)
     p_blend = 0.5 * p_small + 0.5 * np.load(f_clip)
     pd.DataFrame({"id": test["stem"], "prediction": p_blend.argmax(1)}).to_csv(OUT / "pred_small4_baseclip.csv", index=False)
-    mix["blend test preds"] = np.bincount(p_blend.argmax(1), minlength=5) / len(p_blend)
-    print("blend vs final: rows that differ", int((p_blend.argmax(1) != pred).sum()))
 mix.round(3)

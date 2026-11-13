@@ -1,0 +1,9 @@
+09:08:30 === h_effv2m: {'name': 'h_effv2m', 'backbone': 'tf_efficientnetv2_m.in21k_ft_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 32, 'lr': 0.0003, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+09:24:58 fold 4 ep 0: loss 1.5188  val macro F1 0.7751 (non-dark 0.8596)  982s  1.7 GB
+09:40:56 fold 4 ep 1: loss 0.5192  val macro F1 0.8198 (non-dark 0.9053)  957s  1.7 GB
+09:56:53 fold 4 ep 2: loss 0.4624  val macro F1 0.8231 (non-dark 0.9014)  957s  1.7 GB
+10:12:50 fold 4 ep 3: loss 0.4279  val macro F1 0.8296 (non-dark 0.9130)  957s  1.7 GB
+10:28:48 fold 4 ep 4: loss 0.4101  val macro F1 0.8550 (non-dark 0.9408)  958s  1.7 GB
+10:44:45 fold 4 ep 5: loss 0.4027  val macro F1 0.8531 (non-dark 0.9374)  957s  1.7 GB
+10:45:00 fold 4: held-out macro F1 with TTA 0.8480 | non-dark 0.9310  recall [0.609, 0.999, 0.934, 0.908, 0.998]
+10:45:00 === h_effv2m [hard folds ['4']]: macro F1 mean 0.9310 +- 0.0000  [0.931]

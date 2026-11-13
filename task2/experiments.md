@@ -139,3 +139,4 @@ Train + test fully regenerated (same schema and class mix; values per id uncorre
 | Date | Change | CV score | LB score | Notes |
 |---|---|---|---|---|
 | 2026-11-12 | SmoothNB (128 bins, σ 4), unchanged settings, rerun on new data | **0.7570 ± 0.0022** (folds 0.7536 / 0.7563 / 0.7573 / 0.7574 / 0.7603) | 0.84268 (sub_v22, with t4/t5 also changed) | LightGBM+composites 0.7537. Per-class offsets: nested 0.7569 (no gain) → final = plain NB `final_pred.csv` |
+| 2026-11-13 | Independence check on the NEW data: within each segment, Spearman |ρ| between the 34 numeric features (561 pairs) | mean 0.004–0.009, max 0.04, none > 0.05; categorical pairs MI ≤ 0.0014 | – | Features are still conditionally independent given the segment → naive Bayes is Bayes-optimal up to density-estimation error (NB 0.7570 vs posterior-implied ceiling ≈ 0.761, ≤ +0.001 LB). **Task 2 is at its ceiling; no more work.** |

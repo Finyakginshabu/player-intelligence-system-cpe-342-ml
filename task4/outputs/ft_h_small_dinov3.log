@@ -1,0 +1,9 @@
+02:17:49 === h_small_dinov3: {'name': 'h_small_dinov3', 'backbone': 'convnext_small.dinov3_lvd1689m', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+02:21:01 fold 4 ep 0: loss 1.0346  val macro F1 0.6249 (non-dark 0.6583)  191s  2.7 GB
+02:24:00 fold 4 ep 1: loss 0.7231  val macro F1 0.7706 (non-dark 0.8383)  179s  2.7 GB
+02:26:59 fold 4 ep 2: loss 0.5939  val macro F1 0.7547 (non-dark 0.8252)  179s  2.7 GB
+02:29:58 fold 4 ep 3: loss 0.5112  val macro F1 0.7883 (non-dark 0.8629)  179s  2.7 GB
+02:32:57 fold 4 ep 4: loss 0.4514  val macro F1 0.8195 (non-dark 0.8994)  179s  2.7 GB
+02:36:00 fold 4 ep 5: loss 0.4243  val macro F1 0.8362 (non-dark 0.9169)  183s  2.7 GB
+02:36:29 fold 4: held-out macro F1 with TTA 0.8327 | non-dark 0.9141  recall [0.577, 0.996, 0.933, 0.91, 0.967]
+02:36:29 === h_small_dinov3 [hard folds ['4']]: macro F1 mean 0.9141 +- 0.0000  [0.9141]

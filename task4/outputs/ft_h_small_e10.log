@@ -1,0 +1,13 @@
+01:47:19 === h_small_e10: {'name': 'h_small_e10', 'backbone': 'convnext_small.fb_in22k_ft_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 10, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+01:50:28 fold 4 ep 0: loss 0.8630  val macro F1 0.7263 (non-dark 0.8107)  188s  2.7 GB
+01:53:28 fold 4 ep 1: loss 0.5226  val macro F1 0.8442 (non-dark 0.9140)  180s  2.7 GB
+01:56:28 fold 4 ep 2: loss 0.4670  val macro F1 0.8395 (non-dark 0.9162)  180s  2.7 GB
+01:59:28 fold 4 ep 3: loss 0.4405  val macro F1 0.8728 (non-dark 0.9407)  180s  2.7 GB
+02:02:28 fold 4 ep 4: loss 0.4228  val macro F1 0.8456 (non-dark 0.9252)  180s  2.7 GB
+02:05:27 fold 4 ep 5: loss 0.4118  val macro F1 0.8334 (non-dark 0.9153)  179s  2.7 GB
+02:08:27 fold 4 ep 6: loss 0.4028  val macro F1 0.8534 (non-dark 0.9390)  180s  2.7 GB
+02:11:26 fold 4 ep 7: loss 0.3990  val macro F1 0.8547 (non-dark 0.9449)  178s  2.7 GB
+02:14:25 fold 4 ep 8: loss 0.3952  val macro F1 0.8656 (non-dark 0.9543)  179s  2.7 GB
+02:17:24 fold 4 ep 9: loss 0.3950  val macro F1 0.8636 (non-dark 0.9521)  179s  2.7 GB
+02:17:44 fold 4: held-out macro F1 with TTA 0.8595 | non-dark 0.9484  recall [0.615, 1.0, 0.968, 0.928, 1.0]
+02:17:44 === h_small_e10 [hard folds ['4']]: macro F1 mean 0.9484 +- 0.0000  [0.9484]

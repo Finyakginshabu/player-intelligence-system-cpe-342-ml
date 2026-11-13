@@ -1,0 +1,9 @@
+02:55:22 === h_small384_hr: {'name': 'h_small384_hr', 'backbone': 'convnext_small.fb_in22k_ft_in1k_384', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 32, 'lr': 0.00015, 'wd': 0.05, 'h': 288, 'w': 576, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+03:00:28 fold 4 ep 0: loss 0.8220  val macro F1 0.7645 (non-dark 0.8372)  305s  2.8 GB
+03:05:21 fold 4 ep 1: loss 0.5047  val macro F1 0.8544 (non-dark 0.9246)  293s  2.8 GB
+03:10:10 fold 4 ep 2: loss 0.4505  val macro F1 0.8342 (non-dark 0.9149)  289s  2.8 GB
+03:14:58 fold 4 ep 3: loss 0.4215  val macro F1 0.8697 (non-dark 0.9430)  288s  2.8 GB
+03:19:45 fold 4 ep 4: loss 0.4073  val macro F1 0.8536 (non-dark 0.9419)  288s  2.8 GB
+03:24:33 fold 4 ep 5: loss 0.4012  val macro F1 0.8622 (non-dark 0.9462)  288s  2.8 GB
+03:25:05 fold 4: held-out macro F1 with TTA 0.8535 | non-dark 0.9409  recall [0.605, 1.0, 0.949, 0.916, 0.998]
+03:25:05 === h_small384_hr [hard folds ['4']]: macro F1 mean 0.9409 +- 0.0000  [0.9409]

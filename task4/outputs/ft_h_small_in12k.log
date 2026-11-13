@@ -1,0 +1,9 @@
+02:36:35 === h_small_in12k: {'name': 'h_small_in12k', 'backbone': 'convnext_small.in12k_ft_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+02:40:00 fold 4 ep 0: loss 0.8388  val macro F1 0.6993 (non-dark 0.7659)  203s  2.7 GB
+02:43:04 fold 4 ep 1: loss 0.5948  val macro F1 0.7982 (non-dark 0.8576)  184s  2.7 GB
+02:46:02 fold 4 ep 2: loss 0.5098  val macro F1 0.7690 (non-dark 0.8476)  177s  2.7 GB
+02:48:59 fold 4 ep 3: loss 0.4494  val macro F1 0.9072 (non-dark 0.9308)  177s  2.7 GB
+02:51:57 fold 4 ep 4: loss 0.4139  val macro F1 0.8553 (non-dark 0.9346)  178s  2.7 GB
+02:54:57 fold 4 ep 5: loss 0.4022  val macro F1 0.8501 (non-dark 0.9324)  180s  2.7 GB
+02:55:17 fold 4: held-out macro F1 with TTA 0.8463 | non-dark 0.9286  recall [0.604, 0.999, 0.938, 0.915, 0.988]
+02:55:17 === h_small_in12k [hard folds ['4']]: macro F1 mean 0.9286 +- 0.0000  [0.9286]

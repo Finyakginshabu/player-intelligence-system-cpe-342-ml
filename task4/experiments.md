@@ -115,3 +115,63 @@ the model). The blend with Base CLIP changes 2,241 rows vs the Small-only file.
 |---|---|---|---|---|
 | 2026-11-13 | `outputs/final_pred.csv` → `submissions/sub_v24_t4_small4.csv` | ConvNeXt-S × 4 seeds, all data | 0.949 (single seed) | **0.84731** (Δ +0.00463 vs v22 → t4 ≈ 0.873, +0.023 = the held-out gain) |
 | 2026-11-13 | `outputs/pred_small4_baseclip.csv` → `submissions/sub_v25_t4_small4_clip.csv` | 0.5 · S × 4 + 0.5 · B-CLIP | 0.9485 (single seeds) | not uploaded yet |
+
+## Round R2 (2026-11-13): push ConvNeXt-S further, judged on hard fold 4 non-dark
+v24 confirmed the benchmark: held-out +0.023 (T → S) gave LB t4 +0.023. Queue `src/queue_r2.sh`, scorer `src/bench.py`.
+Runs: second seed of the S recipe (seed noise of the benchmark), 10 epochs, DINOv3-distilled ConvNeXt-S (LVD-1689M),
+ConvNeXt-S in12k, ConvNeXt-S 384-weights at 288×576 input, ConvNeXt-V2-B (FCMAE in22k). A change is kept only if it
+beats S by more than the seed noise.
+
+**R2 results (hard fold 4, non-dark; seed noise ±0.006: S seed 42 0.9492, seed 7 0.9435, 2-seed avg 0.9500):**
+
+| Run | non-dark | vs S |
+|---|---|---|
+| S, 10 epochs | 0.9484 | = |
+| S DINOv3 (LVD-1689M) | 0.9141 | worse |
+| S in12k | 0.9286 | worse |
+| S 384-weights at 288×576 | 0.9409 | worse |
+| **ConvNeXt-V2-B FCMAE in22k** | **0.9502** | = alone, but **0.5·S(2 seeds) + 0.5·V2-B = 0.9577** (+0.008 > noise; agreement 96%), + S 10-ep 0.9587 |
+
+Ensembling now helps (unlike S + B-CLIP / B-in22k): V2's FCMAE pretraining makes different errors. → R3 (`src/queue_r3.sh`):
+V2-B on all images × 2 seeds, then a ConvNeXt-V2-L benchmark run.
+
+**R3 results:** V2-B full-data seeds 42 and 7 (≈ 67 min each; test argmax agreement between seeds 0.893). ConvNeXt-V2-L
+hard fold 4: 0.9442 alone; blends with it are lower (S + V2-L 0.9502, S + V2-B + V2-L 0.9545) → not used. Candidate
+`outputs/pred_s4_v2b2.csv` = 0.5·S×4 + 0.5·V2-B×2 → `submissions/sub_v26_t4_s4_v2b2.csv` (1,524 rows differ from v24).
+
+**2026-11-13: user rule — no upload until a file is expected to beat #1 (ML003 0.85787 ⇒ t4 ≈ 0.92).** v26 (expected ≈ 0.849)
+is kept but not uploaded. R4 (`src/queue_r4.sh`): V2-B seed 7 on hard fold 4 (is the blend gain real?), EfficientNetV2-M,
+CAFormer-S36. R5 (`src/queue_r5.sh`): new `ft.py --scene-balance α --scene-k 40` = sample train rows with weight
+(scene size)^−α inside each class (200 CLIP scenes, sizes 7–611), aimed at the test's scene shift; train data only.
+- 2026-11-13: idea "HUD/corner model" (game UI is scene-invariant) **dropped after looking at the frames**: every frame is a
+  random crop of the game screen with rotation up to ≈ 30°, black corner borders, heavy noise and inverted/shifted colours,
+  so UI elements have no fixed position and are mostly absent. Added an EMA run (decay 0.998) to R5 instead.
+
+### Test-set EDA (2026-11-13; looking only: nothing fitted on test, no test label used or set by hand)
+`outputs/eda_test_likeness.npy` = train-vs-test classifier on CLIP-L embeddings (EDA only, never a training weight).
+The 2,500 most test-like test frames, k-means into 6 groups, nearest train images by CLIP similarity (typical test→train
+top-1 similarity 0.979):
+
+| Group | n | top-1 sim | labels of the 10 nearest train images (7-11k/fiveN/freefried/pube/roblock) | our preds | mean conf |
+|---|---|---|---|---|---|
+| 0 crowds in matching white uniforms, night | 410 | **0.940** | 0.16 / 0.43 / 0.28 / 0.10 / 0.04 | 0.24 / 0.75 / 0 / 0.01 / 0 | **0.69** |
+| 2 same crowd scene | 357 | 0.966 | 0.04 / 0.44 / 0.33 / 0.16 / 0.02 | 0.13 / 0.76 / 0.03 / 0.04 / 0.03 | 0.78 |
+| 3 same crowd scene | 465 | 0.965 | 0.18 / 0.18 / 0.47 / 0.13 / 0.05 | 0.35 / 0.55 / 0.03 / 0.06 / 0 | **0.65** |
+| 1 | 102 | 0.961 | 0.85 / 0.11 / 0.03 / 0 / 0 | 0.74 / 0.25 / … | 0.92 |
+| 4 blocky scenes, saturated single colours | 870 | 0.969 | 0.04 / 0.08 / 0.08 / 0.44 / 0.37 | … / 0.86 roblock | 0.85 |
+| 5 same | 296 | 0.949 | 0.05 / 0.02 / 0.02 / 0.07 / 0.85 | … / 0.75 roblock | 0.82 |
+
+**Finding:** ≈ 1,200 test frames (≈ 5% of test) show one event-like scene (large crowds in matching uniforms) that has no
+close match in train: the nearest train images are ordinary street/fight scenes spread over 3 games, and the models split
+these frames between two classes with low confidence. This is the main source of the CV 0.95 → LB 0.87 gap and is
+largely out of reach for any train-only method; we must not label or steer these frames by hand. Other uncertain test
+frames are very dark (near-black) frames. Consequence: t4 ≈ 0.92 (needed for #1) is unlikely; methods that push the
+model towards game style rather than scene content (scene-balanced sampling, diverse backbones) are the only legal levers.
+
+**R4 partial / audit (2026-11-13 11:30):** V2-B seed 7 on hard fold 4 = 0.9504 (seed 42: 0.9502). Blend gain replicates but
+is smaller than first measured: S(2) + V2-B(s7) 0.9552, S(2) + V2-B(both) **0.9558** (+0.0058 over S(2) 0.9500); on all
+rows (exact competition metric) 0.8640 → 0.8692 (+0.005). Note: V2-B(2 seeds) alone is also 0.9558 (all rows 0.8701), so
+the gain comes from V2-B; mixing it with S is neutral on this fold but kept for diversity. Expected LB for v26 ≈ +0.001.
+`task4_final.ipynb` now builds this blend as `outputs/final_pred.csv` (= v26 column, checked) and keeps the S-only column
+(v24) as `outputs/pred_small4.csv`. Still to do before it is final: confirmation on an unused fold (selection bias:
+≈ 20 variants have been compared on hard fold 4).

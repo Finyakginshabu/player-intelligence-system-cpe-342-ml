@@ -114,6 +114,7 @@ the model). The blend with Base CLIP changes 2,241 rows vs the Small-only file.
 | Date | File | Model | held-out (hard 4, non-dark) | LB |
 |---|---|---|---|---|
 | 2026-11-13 | `outputs/final_pred.csv` → `submissions/sub_v24_t4_small4.csv` | ConvNeXt-S × 4 seeds, all data | 0.949 (single seed) | **0.84731** (Δ +0.00463 vs v22 → t4 ≈ 0.873, +0.023 = the held-out gain) |
+| 2026-11-13 | `outputs/pred_s4_v2b2.csv` (= `final_pred.csv` since the audit) → `submissions/sub_v26_t4_s4_v2b2.csv` | 0.5 · S × 4 + 0.5 · V2-B × 2 | 0.9558 (2 V2 seeds) | **0.85066** (Δ +0.00335 vs v24 → t4 ≈ 0.890, +0.017 = 3× the held-out gain) |
 | 2026-11-13 | `outputs/pred_small4_baseclip.csv` → `submissions/sub_v25_t4_small4_clip.csv` | 0.5 · S × 4 + 0.5 · B-CLIP | 0.9485 (single seeds) | not uploaded yet |
 
 ## Round R2 (2026-11-13): push ConvNeXt-S further, judged on hard fold 4 non-dark

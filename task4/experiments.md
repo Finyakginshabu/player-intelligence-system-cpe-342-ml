@@ -200,3 +200,4 @@ the gain comes from V2-B; mixing it with S is neutral on this fold but kept for 
 | blends: S+V2 0.9558, (α1.0)+V2 0.9553, S+α1.0+V2 0.9563 | | nothing beyond the v26 recipe |
 
   Both targeted ideas fail. The second-seed rule caught a false positive (α 1.0: +0.008 on one seed, 0 on two).
+- 2026-11-13: **v27 = ⅓ S×4 + ⅓ V2-B×2 + ⅓ B-CLIP×1 → LB 0.84830 (−0.00236 vs v26, t4 ≈ 0.878)**: adding the CLIP family hurts on the test although it tied on held-out. So the v26 gain is specific to V2-B (FCMAE pretraining), not generic diversity. Next: more V2-B seeds; CAFormer only as a separate test.

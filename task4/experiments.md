@@ -178,3 +178,13 @@ the gain comes from V2-B; mixing it with S is neutral on this fold but kept for 
 - R4 (2026-11-13): EfficientNetV2-M in21k 0.931 (worse; S+V+E 0.9524 < S+V 0.9558). CAFormer-S36 in22k **0.9506** alone (= V2-B),
   S+V+C 0.9567 (+0.0009 over S+V, within noise) → not adopted for now; a candidate if a later round needs more diversity.
   R5 started 11:40: scene-balance 0.5 / 1.0, EMA, then the unused-fold check (hard fold 3: S vs V2-B).
+
+## Round R5/R6 (2026-11-13): targeted at the test scene shift
+- Test-like validation fold (adversarial split) **not usable**: every train region, even the 5 coarse k-means regions per
+  class, keeps near-twins in the remaining train (median nearest similarity 0.97–0.98), while the test-only frames sit at
+  0.94–0.966. No train split is as novel as the test crowd scene → hard fold 4 stays the benchmark (it predicted the LB 1:1).
+- R5 scene-balanced sampling (k = 40 CLIP scenes, weight (scene size)^−α within class), hard fold 4 non-dark:
+  α 0.5 → 0.9458 (= S, 0.9435–0.9492); **α 1.0 → 0.9541** (+0.008 over the mean single S seed) → second seed and fold 3 queued.
+- New `ft.py --scale-max` and `--tta-grid` (full frame + 3×2 grid of training-size crops at prediction). R6 (`src/queue_r6.sh`):
+  small-crop training (area 0.10–0.40 and 0.20–0.60) to push the model onto local game style instead of scene layout,
+  then α 1.0 seed 7, fold 3 for S / S α 1.0 / V2-B, EMA last.

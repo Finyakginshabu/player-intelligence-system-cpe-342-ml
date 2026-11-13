@@ -44,7 +44,9 @@ p.add_argument("--invert", type=float, default=0.05)
 p.add_argument("--scale-min", type=float, default=0.75, help="min area fraction of the random crop")
 p.add_argument("--erase", type=float, default=0.0, help="probability of erasing one random box")
 p.add_argument("--balance", type=float, default=0.5, help="class weight = (max count / count) ** balance")
-p.add_argument("--scene-balance", type=float, default=0.0,
+p.add_argument("--scale-max", type=float, default=1.0, help="max area fraction of the random crop")
+p.add_argument("--tta-grid", action="store_true", help="predict with full frame + 3x2 grid of training-size crops")
+p.add_argument("--scene-balance",type=float, default=0.0,
                help="sample train rows with weight (scene size) ** -alpha within each class (0 = off)")
 p.add_argument("--scene-k", type=int, default=10, help="CLIP k-means scenes per class used by --scene-balance")
 p.add_argument("--ema",type=float, default=0.0, help="EMA decay of weights (0 = off); EMA weights are used for prediction")
@@ -129,7 +131,7 @@ def train_tf(xb):
     x = to_float(xb)
     B = x.shape[0]
     U = lambda lo, hi: torch.empty(B, device=DEV).uniform_(lo, hi)  # noqa: E731
-    area, ratio = U(A.scale_min, 1.0), torch.exp(U(math.log(1.7 / ASPECT), math.log(2.2 / ASPECT)))
+    area, ratio = U(A.scale_min, A.scale_max), torch.exp(U(math.log(1.7 / ASPECT), math.log(2.2 / ASPECT)))
     fw, fh = (area * ratio).sqrt().clamp(max=1.0), (area / ratio).sqrt().clamp(max=1.0)
     tx, ty = (1 - fw) * U(-1, 1), (1 - fh) * U(-1, 1)
     rot = torch.where(U(0, 1) < 0.3, U(-8, 8), torch.zeros(B, device=DEV)) * math.pi / 180
@@ -180,17 +182,32 @@ def mix_batch(x, y1h):
     return x, lam * y1h + (1 - lam) * y1h[perm]
 
 
+def crop_tf(xb, fw, fh, tx, ty):
+    x = to_float(xb)
+    B = x.shape[0]
+    c = lambda v: torch.full((B,), float(v), device=DEV)  # noqa: E731
+    return ((warp(x, c(fw), c(fh), c(tx), c(ty), c(0.0)) - MEAN) / STD).contiguous(memory_format=torch.channels_last)
+
+
 @torch.no_grad()
 def predict(model, X, idx=None, zooms=(1.0, 1.08, 1.15)):
+    """Average of softmax over the zoom views; with --tta-grid also over a 3 x 2 grid of crops of the training crop
+    size (area = mean of [scale_min, scale_max]), so a model trained on small crops is evaluated on what it saw."""
     model.eval()
     n = len(X) if idx is None else len(idx)
     out = torch.zeros(n, 5, device=DEV)
+    views = [("zoom", z) for z in zooms]
+    if A.tta_grid and zooms != (1.0,):  # (1.0,) = the quick per-epoch check
+        side = math.sqrt((A.scale_min + A.scale_max) / 2)
+        views = [("zoom", 1.0)] + [("crop", (tx, ty)) for tx in np.linspace(-(1 - side), 1 - side, 3)
+                                   for ty in np.linspace(-(1 - side), 1 - side, 2)]
     for s in range(0, n, A.batch * 2):
         sl = slice(s, s + A.batch * 2)
         xb = X[sl] if idx is None else X[torch.as_tensor(idx[sl])]
-        for z in zooms:
+        for kind, v in views:
+            xin = eval_tf(xb, v) if kind == "zoom" else crop_tf(xb, side, side, v[0], v[1])
             with torch.autocast(DEV):
-                out[sl] += model(eval_tf(xb, z)).float().softmax(1) / len(zooms)
+                out[sl] += model(xin).float().softmax(1) / len(views)
     return out.cpu().numpy()
 
 

@@ -263,10 +263,3 @@ Legal candidates, each one LB yes/no test (keep only if > v28 + 0.002):
 ## REPORT FREEZE (2026-11-13, git tag `report-freeze`): clean best = v28 (LB 0.85104)
 Below this line: **KAGGLE-ONLY** experiments (TA, 2026-11-13: the written rules bind the report and the source code, not the
 leaderboard). Runs that use test images carry `pl` / `ko` in their names and are never reported as the clean model.
-
-### K1 (KAGGLE-ONLY): pseudo-labelling round 1 (`ft.py --pl`, `src/queue_k1.sh`)
-`--pl <teacher.npy> --pl-thr 0.9`: with `--cv full` the confident TEST rows (teacher = v28's test probabilities) are added
-to training with the teacher's argmax as label; with hard/scene CV the confident HELD-OUT rows get the teacher's labels
-instead (simulation). Simulation teacher `oof_h_teacher4.npy` = mean of the 4 hard-fold-4 models (S×2, V2-B×2): coverage
-/ accuracy on held-out at conf ≥ 0.7 / 0.8 / 0.9 = 0.897 / 0.938, 0.852 / 0.958, 0.779 / 0.984.
-Queue: h_small_pl (simulation, vs h_small 0.9492) → f_small_pl s42 → f_v2base_pl s42 → f_small_pl s7 → f_v2base_pl s7.

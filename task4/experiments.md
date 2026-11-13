@@ -271,3 +271,6 @@ New `ft.py` options: `--rot-max/--rot-p` (rotation; the data itself has up to �
 - ViT for the ensemble: EVA-02-B (MIM in22k → in22k → in1k; masked-image pretraining, which is what helped for CNNs),
   lr 5e-5, layer decay 0.75, at 224×448 (16×32 patches).
 Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-data run for an LB test. Then R10.
+- R9 `f_v2bssl_s42` (pure self-supervised FCMAE, 8 epochs, lr 2e-4, layer decay 0.8): **underfit**: loss 1.41 → 0.96 → 0.83
+  → 0.76 → 0.72 → 0.70 → 0.67 → 0.668 (healthy runs end ≈ 0.395); test agreement vs S 0.828 / V2-B 0.833 → **not uploaded**.
+  `sub_v33_t4_v2bssl.csv` built but dropped. R10 branch A (pure FCMAE → MIM → same fine-tune) dropped for the same reason.

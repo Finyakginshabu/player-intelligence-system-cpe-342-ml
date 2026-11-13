@@ -235,3 +235,15 @@ test NaN rates (only columns where test has more NaN can be simulated; no test r
 - **Not kept** (no gain). Useful conclusion for the audit: the extra test missingness costs only ≈ 0.0007 and the F2-optimal
   threshold does not move (0.159 → 0.161; test positive rate 0.617 → 0.615), so the CV↔LB link for task 1 is robust.
 - 2026-11-11: 5-seed final (thr 0.1589) uploaded in sub_v19 together with task 3 two-stage and task 5 ID block: LB 0.76108; t1 + t3 together +0.00062 (predicted +0.0007).
+
+## Round 6 (2026-11-13): is 0.838 really the ceiling? (fresh look, CPU, ≈ 2 min)
+Motivation: back-of-envelope from ML003's LB before/after the data refresh suggested their lead might sit in tasks 1–3.
+
+| Check | Result | Reading |
+|---|---|---|
+| Calibration of the final OOF (lgbm_sig_5seed), deciles of p → true rate | 0.157→0.149, 0.27→0.274, 0.352→0.370, 0.429→0.429, 0.524→0.517, 0.741→0.745 | well calibrated everywhere |
+| Model-implied binary F2 (labels resampled ~ Bernoulli(OOF p), 50 draws, thr 0.1589) | 0.8311 ± 0.0010 vs real 0.8379 | the real labels are as predictable as the model's own probabilities say: no sign of structure left on the table |
+| Different inductive bias: kNN (k 150, distance-weighted, quantile-scaled 15 signal features, in-fold) | nested 0.7625 alone; blends w 0.1/0.2/0.3 with lgbm: −0.0009/−0.0023/−0.0037, 0 of 5 folds up | trees already hold everything kNN sees |
+
+**Conclusion:** task 1 stays at 0.8379 (nested); the label-noise ceiling holds. Not tried on purpose: self-training on the
+13,184 unlabeled TRAIN rows (pseudo-labels are banned in spirit by rule 2, and they add no information to a calibrated model).

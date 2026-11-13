@@ -230,3 +230,10 @@ equal-weight recipes only, keep only clear gains (> 0.002 LB). Candidates (all m
 - **Unused-fold confirmation (audit item 2, hard fold 3, non-dark):** S 0.9622, **V2-B 0.9696 (+0.0074)**, S+V2 0.9704 → the
   v26 recipe holds on a fold never used for any choice. EMA (decay 0.998) on fold 4: 0.9468 vs 0.9492 → no gain, not used.
 - 2026-11-13: full-data V2-B seeds 123 (loss 0.394, OK) and 2026 (**diverged**: epoch losses 1.29 / 1.57 / 1.42 / 1.04 / 0.72 / 0.50 vs ≈ 0.72 / 0.48 / 0.43 / 0.41 / 0.40 / 0.39 for the other seeds; test agreement 0.84 vs 0.89–0.905 between healthy seeds) → seed 2026 excluded. v28 = 0.5·S×4 + 0.5·V2-B×3 (471 rows differ from v26). Rule from now on: check every run's loss curve before using it.
+
+### 2026-11-13 R8: ConvNeXt-V2-L (FCMAE in22k), full data, seed 42
+- Training healthy: loss 0.707 → 0.462 → 0.425 → 0.407 → 0.398 → 0.394 (≈ 18 min/epoch, 5.1 GB, batch 16, lr 6e-5).
+- Hard fold 4 non-dark (single seed): V2-L 0.9442 vs V2-B (2 seeds) 0.9558, S (2 seeds) 0.9500; S+B 0.9558, S+B+L 0.9553 (±0). The held-out benchmark can't judge pretraining (V2-B: +0.006 held-out → +0.017 LB t4; B-CLIP: ±0 → −0.012), so this is an LB yes/no test.
+- Test: V2-L agrees with V2-B on 91.1% and with S on 89.1% of rows; it is the most confident (mean max-prob 0.89 vs 0.856 / 0.839).
+- Candidate v29 = (S×4 + V2-B×3 + V2-L)/3 (equal family weights) → `outputs/pred_s4_v2b3_v2l1.csv`, `submissions/sub_v29_t4_s4_v2b3_v2l1.csv`; 1,119 task-4 rows differ from v28. Keep only if LB > v28 + 0.002.
+- **LB: v29 = 0.85093 vs v28 0.85104 (Δ −0.0001, t4 ≈ −0.0006) → dropped.** Same pretraining (FCMAE) at a bigger size gives no test gain; the V2-B gain came from the pretraining family, not from size. Implication for R8: V2-B-384 (same family, higher res) is also unlikely to help; Hiera (MAE) and CAFormer (in22k, different architecture) are the remaining real family tests.

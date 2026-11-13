@@ -188,3 +188,14 @@ the gain comes from V2-B; mixing it with S is neutral on this fold but kept for 
 - New `ft.py --scale-max` and `--tta-grid` (full frame + 3×2 grid of training-size crops at prediction). R6 (`src/queue_r6.sh`):
   small-crop training (area 0.10–0.40 and 0.20–0.60) to push the model onto local game style instead of scene layout,
   then α 1.0 seed 7, fold 3 for S / S α 1.0 / V2-B, EMA last.
+- **R6 results (hard fold 4 non-dark unless noted):**
+
+| Run | Score | Reading |
+|---|---|---|
+| S small crops, area 0.10–0.40 + grid TTA | 0.8620 | much worse: the frame-level context matters |
+| S small crops, area 0.20–0.60 + grid TTA | 0.9095 | worse → small-crop training rejected |
+| S scene-balance α 1.0, seed 7 | 0.9355 (seed 42: 0.9541) | 2-seed average 0.9495 = S 2-seed 0.9500 → the seed-42 gain was luck |
+| fold 3 (unused): S / S α 1.0 | 0.9622 / 0.9635 | +0.0013 = noise → scene balancing rejected |
+| blends: S+V2 0.9558, (α1.0)+V2 0.9553, S+α1.0+V2 0.9563 | | nothing beyond the v26 recipe |
+
+  Both targeted ideas fail. The second-seed rule caught a false positive (α 1.0: +0.008 on one seed, 0 on two).

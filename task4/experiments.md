@@ -237,3 +237,7 @@ equal-weight recipes only, keep only clear gains (> 0.002 LB). Candidates (all m
 - Test: V2-L agrees with V2-B on 91.1% and with S on 89.1% of rows; it is the most confident (mean max-prob 0.89 vs 0.856 / 0.839).
 - Candidate v29 = (S×4 + V2-B×3 + V2-L)/3 (equal family weights) → `outputs/pred_s4_v2b3_v2l1.csv`, `submissions/sub_v29_t4_s4_v2b3_v2l1.csv`; 1,119 task-4 rows differ from v28. Keep only if LB > v28 + 0.002.
 - **LB: v29 = 0.85093 vs v28 0.85104 (Δ −0.0001, t4 ≈ −0.0006) → dropped.** Same pretraining (FCMAE) at a bigger size gives no test gain; the V2-B gain came from the pretraining family, not from size. Implication for R8: V2-B-384 (same family, higher res) is also unlikely to help; Hiera (MAE) and CAFormer (in22k, different architecture) are the remaining real family tests.
+
+### 2026-11-13 R8 results (LB yes/no tests, one family each)
+- V2-L: 0.85093 (−0.0001, no gain). **CAFormer-S36 in22k: 0.84962 (−0.0014, t4 ≈ −0.007) → hurts.** V2-B-384 not uploaded (same FCMAE family as V2-B/V2-L; no new information expected). Hiera not uploaded (undertrained: final loss 0.488 vs 0.395, test agreement 0.83, like the diverged seed).
+- Pattern over all family tests: only V2-B (masked FCMAE pretraining on ConvNeXt) helped on the shifted test; CLIP, a bigger V2, and CAFormer did not. v28 remains the best file; further blends of other families are unlikely to close the 0.0068 gap to #1.

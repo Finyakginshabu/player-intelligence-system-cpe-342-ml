@@ -201,3 +201,16 @@ the gain comes from V2-B; mixing it with S is neutral on this fold but kept for 
 
   Both targeted ideas fail. The second-seed rule caught a false positive (α 1.0: +0.008 on one seed, 0 on two).
 - 2026-11-13: **v27 = ⅓ S×4 + ⅓ V2-B×2 + ⅓ B-CLIP×1 → LB 0.84830 (−0.00236 vs v26, t4 ≈ 0.878)**: adding the CLIP family hurts on the test although it tied on held-out. So the v26 gain is specific to V2-B (FCMAE pretraining), not generic diversity. Next: more V2-B seeds; CAFormer only as a separate test.
+
+### Analytic search for a task-4 breakthrough (2026-11-13 afternoon; CPU / light GPU, nothing fitted on test, no prediction changed)
+| Question | Result | Consequence |
+|---|---|---|
+| Can test-set structure be used (frames of one video share a label)? | No. In TRAIN, 10-NN pairs share the label only 65% (raw CLIP-L), 68% centered, 71% PCA-whitened (closest 10% of pairs: 86%), 69% frozen ConvNeXt-T. Every frame has its own random colour / noise / rotation, so even consecutive frames are not neighbours | no "same scene → same label" smoothing possible |
+| Is the test gap concentrated (crowd scene, dark frames)? | No. Brightness profile test ≈ train. Test confidence is low in every brightness bin (bright frames: mean conf 0.85, 78% unanimous over 6 models). conf < 0.7 on **18.1% of test** vs **6.2% of held-out**; 6 models not unanimous on 24.4% of test vs 7.3% (4 models) held-out | broad content shift (other videos), not one fixable scene; the crowd scene is ≈ 5% of test |
+| Does held-out calibration explain the LB? | Held-out accuracy by confidence: 0.39 / 0.56 / 0.89 / 0.998 for conf < 0.5 / 0.5–0.7 / 0.7–0.9 / ≥ 0.9; unanimous rows 98.7%, non-unanimous 59.0%. Applied to v26's test confidences → implied accuracy 0.888 vs LB t4 ≈ 0.890 | the models are roughly calibrated on test; the loss is the 18% unsure frames at ≈ 50% accuracy |
+| Can that give a label-free file selector (`src/implied.py`)? | **No**: v24 0.878 (LB 0.873), v26 0.887 (0.890), but v27 0.890 (LB 0.878) and single seed 0.900 > its 4-seed average | not usable for selection (overconfident blends look better) |
+| How noisy are the files (seed variance on test)? | S: 1 seed vs 4-seed average differ on 6.8% of test rows, 2-avg vs 4-avg 4.1%, two independent 2-seed averages 8.1% | seed count is the remaining safe lever: more seeds per family (v28 = V2-B × 4) |
+
+**Conclusion:** no train-only breakthrough found. Reaching t4 ≈ 0.926 (#1) means fixing about a third of the errors on the
+unsure 18% of test frames; the standard tools for that (pseudo-labels, test-time adaptation, test-prior estimation) all
+adapt to test images and are banned by rule 2. Legal levers left are incremental: more seeds, stronger per-image TTA.

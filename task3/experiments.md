@@ -101,3 +101,15 @@ Data: `train.csv` 104,000 × 34 (`player_id`, 32 numeric features, `spending_30d
 
 ## 2026-11-11: round-5 multi-seed model used for the last polish upload
 `outputs/pred_twostage_ms_cat.csv` = `test_twostage_ms_cat.npy` (both stages × 3 seeds + CatBoost gate, CV 0.78843) as an id,prediction file, written by `task2/src/experiments_r6.py`. In `submissions/sub_v21_clean_polish.csv`: **LB 0.71612** (Δ +0.00004 vs v20 together with the task-2 offsets, within noise). `final_pred.csv` unchanged.
+
+## Round 7 (2026-11-13): last checks on the two-stage model (`src/experiments_r7.py`, CPU ≈ 3 min + Optuna install)
+Reference: twostage_ms_cat (both stages × 3 seeds + CatBoost gate) **0.78843 ± 0.0036** = the task-3 column in every file since v21.
+
+| Date | Change | CV NMAE | Δ / folds up | Kept? |
+|---|---|---|---|---|
+| 2026-11-13 | E1 impute `segment` (missing on 5.7% of rows) — **bound only**: those rows hold 6.5% of Σ\|y−ŷ\| at relative error 0.279 vs 0.268; closing the gap entirely = +0.0004 at most | ≤ 0.7888 | < fold std | not built |
+| 2026-11-13 | E2 Optuna on the stage-1 gate (40 TPE trials, OOF log-loss): best logloss 0.5522 vs 0.5524 (lr 0.069, 13 leaves, min_child 145) | tuned gate 0.78831; avg with current gate 0.78838 | −0.0001 / 0 of 5 | no (`oof/test_twostage_tunedgate.npy` saved) |
+| 2026-11-13 | E3 per-segment gate thresholds (grid 0.40–0.60, nested) | 0.78843 | 0.0000 / 2 of 5 | no. Whales never fall below the 0.5 gate (min p ≥ 0.5), so their threshold is irrelevant; the other segments pick ≈ 0.49–0.51 = the 0.5 cut is already optimal |
+
+**Conclusion:** the gate cannot be improved by tuning or thresholds (it is calibrated and its signal is limited, round 4),
+and the missing-segment rows cannot be worth more than +0.0004. Task 3 stays at 0.7884; no further work planned.

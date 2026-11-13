@@ -140,3 +140,17 @@ Train + test fully regenerated (same schema and class mix; values per id uncorre
 |---|---|---|---|---|
 | 2026-11-12 | SmoothNB (128 bins, σ 4), unchanged settings, rerun on new data | **0.7570 ± 0.0022** (folds 0.7536 / 0.7563 / 0.7573 / 0.7574 / 0.7603) | 0.84268 (sub_v22, with t4/t5 also changed) | LightGBM+composites 0.7537. Per-class offsets: nested 0.7569 (no gain) → final = plain NB `final_pred.csv` |
 | 2026-11-13 | Independence check on the NEW data: within each segment, Spearman |ρ| between the 34 numeric features (561 pairs) | mean 0.004–0.009, max 0.04, none > 0.05; categorical pairs MI ≤ 0.0014 | – | Features are still conditionally independent given the segment → naive Bayes is Bayes-optimal up to density-estimation error (NB 0.7570 vs posterior-implied ceiling ≈ 0.761, ≤ +0.001 LB). **Task 2 is at its ceiling; no more work.** |
+
+## Round 7 (2026-11-13): NB polish on the refreshed data (`src/experiments_r7.py`, CPU, ≈ 2 min total)
+Baseline SmoothNB 0.7570 ± 0.0022. Every choice re-checked by nested selection (picked on 4 folds, scored on the 5th).
+Missingness checked first: independent of the segment on the new data too (χ² p 0.04–0.2 over 44 columns, missing-count
+mean 3.79–3.82 per class) → "missingness as signal" not run.
+
+| Date | Change | CV (5-fold macro F1) | Nested | Kept? |
+|---|---|---|---|---|
+| 2026-11-13 | E1 smoothing grid: n_bins {64,128,256} × σ {2,4,8} × max_levels {16,64} (18 settings, 36 s) | best (256, 8, 16) 0.7571 (+0.0002) | 0.7566 (−0.0003), picks differ by fold | no: current 128/σ 4 is at the optimum |
+| 2026-11-13 | E2 drop-one ablation over 44 columns; drop the 6 whose removal helps (93 s) | 0.7569 (−0.0001); best single drop +0.0003 | 0.7568 (−0.0001) | no: no column is harmful |
+| 2026-11-13 | E3 blend NB + w · LightGBM-composites (w 0–0.5) | w 0.3: 0.7575 ± 0.0016 (+0.0006) | **0.7573 (+0.0003)**, weights 0.2–0.3 | no: +0.0003 < fold std 0.0022 |
+
+**Conclusion:** consistent with the independence check: NB with the current settings is at the task-2 ceiling on the new
+data (≈ 0.757–0.761). `final_pred.csv` unchanged. No further task-2 work planned.

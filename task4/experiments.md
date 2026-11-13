@@ -175,3 +175,6 @@ the gain comes from V2-B; mixing it with S is neutral on this fold but kept for 
 `task4_final.ipynb` now builds this blend as `outputs/final_pred.csv` (= v26 column, checked) and keeps the S-only column
 (v24) as `outputs/pred_small4.csv`. Still to do before it is final: confirmation on an unused fold (selection bias:
 ≈ 20 variants have been compared on hard fold 4).
+- R4 (2026-11-13): EfficientNetV2-M in21k 0.931 (worse; S+V+E 0.9524 < S+V 0.9558). CAFormer-S36 in22k **0.9506** alone (= V2-B),
+  S+V+C 0.9567 (+0.0009 over S+V, within noise) → not adopted for now; a candidate if a later round needs more diversity.
+  R5 started 11:40: scene-balance 0.5 / 1.0, EMA, then the unused-fold check (hard fold 3: S vs V2-B).

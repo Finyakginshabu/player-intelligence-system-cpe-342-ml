@@ -73,15 +73,3 @@ shift (round 5).
 | 2026-11-13 | submissions/sub_v28_t4_s4_v2b3.csv | = v26 | = v26 | = v26 | 0.5 · ConvNeXt-S × 4 + 0.5 · ConvNeXt-V2-B × **3** (seeds 42, 7, 123; seed 2026 excluded: diverged in training, epoch-1 loss 1.57, final 0.498 vs 0.394, test agreement with the other seeds 0.84 vs 0.89–0.905); 471 rows differ from v26 | = v26 | **0.85104** (2026-11-13 18:05 Thai) = **best file, 2nd** (ML003 0.85787) | Δ +0.00038 vs v26 (t4 ≈ +0.002), as expected for pure seed averaging. New base for the family tests. Expected ≈ +0.0005–0.001 (within LB noise). `--base sub_v26_t4_s4_v2b2.csv --replace task4=task4/outputs/pred_s4_v2b3.csv` |
 | 2026-11-13 | submissions/sub_v29_t4_s4_v2b3_v2l1.csv | = v28 | = v28 | = v28 | **⅓ ConvNeXt-S × 4 + ⅓ ConvNeXt-V2-B × 3 + ⅓ ConvNeXt-V2-L × 1** (FCMAE in22k, healthy loss 0.707 → 0.394); held-out 0.9553 vs 0.9558 (±0); 1,119 rows differ from v28 | = v28 | 0.85093 (2026-11-13 20:06 Thai) | **Δ −0.00011 vs v28 (t4 ≈ −0.0006) = no gain → dropped, v28 stays best.** Bigger model from the same FCMAE pretraining adds nothing on the test. Task 4 only. `--base sub_v28_t4_s4_v2b3.csv --replace task4=task4/outputs/pred_s4_v2b3_v2l1.csv` |
 | 2026-11-13 | submissions/sub_v30_t4_s4_v2b3_caf1.csv | = v28 | = v28 | = v28 | ⅓ ConvNeXt-S × 4 + ⅓ ConvNeXt-V2-B × 3 + ⅓ CAFormer-S36 (in22k) × 1; held-out 0.9567 vs 0.9558 (±0); 1,163 rows differ from v28 | = v28 | 0.84962 (2026-11-13 22:20 Thai) | **Δ −0.00142 vs v28 (t4 ≈ −0.007) → CAFormer HURTS → dropped, v28 stays best.** Task 4 only. `--base sub_v28_t4_s4_v2b3.csv --replace task4=task4/outputs/pred_s4_v2b3_caf1.csv` |
-
----
-## REPORT FREEZE (2026-11-13 ~00:00 Thai, git tag `report-freeze`)
-Everything above this line follows the written project rules (PDF "Competition Rules": provided data only, no test-set
-usage for training, no pseudo-labelling / fine-tuning on test, no AutoML, tasks 1/2/3/5 from scratch). **Best clean file =
-`sub_v28_t4_s4_v2b3.csv`, LB 0.85104.** The technical report and the source-code deliverable describe this state
-(plus any later run that is still train-only, e.g. R9/R10, which keeps the clean-model label).
-
-The TA said (2026-11-13) that those rules apply to the report and the final source code, not to the Kaggle leaderboard.
-From here on, files marked **KAGGLE-ONLY** may use test images (pseudo-labelling, test-time adaptation, self-supervised
-training on test images, test-prior estimation). They are never presented as the clean model. The `player_id` leak stays
-banned (the professor's explicit ruling of 2026-11-11; it is also gone from the refreshed data).

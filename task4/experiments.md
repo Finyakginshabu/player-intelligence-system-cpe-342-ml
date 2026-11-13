@@ -258,3 +258,8 @@ Legal candidates, each one LB yes/no test (keep only if > v28 + 0.002):
   60 %), 1x1-conv + pixel-shuffle decoder (zero-init), MSE on per-patch-normalised masked pixels; TRAIN images only, test
   never loaded. A: pure FCMAE → MIM 10 ep → fine-tune (vs R9 f_v2bssl). B: V2-B in22k → MIM 6 ep (lr 5e-5) → V2-B recipe
   (vs f_v2base_s42). Smoke test: loss 0.98 → 0.93 in 3 short epochs; init loads all encoder keys (only head missing).
+
+---
+## REPORT FREEZE (2026-11-13, git tag `report-freeze`): clean best = v28 (LB 0.85104)
+Below this line: **KAGGLE-ONLY** experiments (TA, 2026-11-13: the written rules bind the report and the source code, not the
+leaderboard). Runs that use test images carry `pl` / `ko` in their names and are never reported as the clean model.

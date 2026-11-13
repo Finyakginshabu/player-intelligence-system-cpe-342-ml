@@ -274,3 +274,11 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - R9 `f_v2bssl_s42` (pure self-supervised FCMAE, 8 epochs, lr 2e-4, layer decay 0.8): **underfit**: loss 1.41 → 0.96 → 0.83
   → 0.76 → 0.72 → 0.70 → 0.67 → 0.668 (healthy runs end ≈ 0.395); test agreement vs S 0.828 / V2-B 0.833 → **not uploaded**.
   `sub_v33_t4_v2bssl.csv` built but dropped. R10 branch A (pure FCMAE → MIM → same fine-tune) dropped for the same reason.
+- **R11 results (2026-11-14 06:30)**, hard fold 4 non-dark (ref S 0.9492, V2-B 0.9502, S+V2-B 0.9571, seed noise ±0.006):
+  heavy aug S 0.9416 (−0.008; S+heavy 0.9520 vs S+S7 0.9500, S+heavy+V2-B 0.9572 ≈ ref); full balancing (`--balance 1.0`)
+  0.9344 (**−0.015, dropped**; recall of 7-11k 0.594, the minority classes were already at ≈ 1.0); EVA-02-B 0.9371
+  (S+V2-B+EVA 0.9554, at weight ¼ 0.9569 ≈ ref). Held-out can't judge the test shift, so the three survivors are LB family
+  tests (S×4 + V2-B×3 + new)/3: `sub_v34_t4_eva1` (1,210 rows changed vs v28), `sub_v35_t4_mim1` (R10 B: in-domain MIM
+  6 epochs on train images, masked-patch loss 0.585 → 0.444, then the usual fine-tune, final loss 0.395 = healthy; 1,068 rows),
+  `sub_v36_t4_heavy1` (966 rows). Test agreement vs v28: EVA 0.886, heavy 0.902, MIM 0.903.
+- `f_v2base_s2026` (from R8) **diverged** (fold-0 loss 1.04 at epoch 3, 0.50 at the end; agreement 0.84): never use it.

@@ -1,0 +1,8 @@
+04:15:41 === mim v2b22k: {'name': 'v2b22k', 'backbone': 'convnextv2_base.fcmae_ft_in22k_in1k', 'epochs': 6, 'batch': 32, 'lr': 5e-05, 'wd': 0.05, 'mask': 0.6, 'patch': 32, 'h': 224, 'w': 448, 'drop_path': 0.1, 'limit': 0, 'seed': 42} | grid 7x14, 59 masked patches, 31546 train images
+04:26:02 ep 0: masked-patch loss 0.5853  622s  4.3 GB
+04:36:17 ep 1: masked-patch loss 0.4735  614s  4.3 GB
+04:46:31 ep 2: masked-patch loss 0.4584  614s  4.3 GB
+04:56:45 ep 3: masked-patch loss 0.4507  614s  4.3 GB
+05:06:59 ep 4: masked-patch loss 0.4462  614s  4.3 GB
+05:17:14 ep 5: masked-patch loss 0.4441  614s  4.3 GB
+05:17:14 done

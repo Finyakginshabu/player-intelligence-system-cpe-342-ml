@@ -1,0 +1,9 @@
+01:46:42 === f_small_heavy_s42: {'name': 'f_small_heavy_s42', 'backbone': 'convnext_small.fb_in22k_ft_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 8, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.3, 'hue': 0.3, 'gray': 0.1, 'invert': 0.3, 'rot_max': 30.0, 'rot_p': 0.6, 'chperm': 0.5, 'scale_min': 0.6, 'erase': 0.25, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': ''}
+01:50:11 fold 0 ep 0: loss 1.0179  207s  2.7 GB
+01:53:28 fold 0 ep 1: loss 0.7030  197s  2.7 GB
+01:56:48 fold 0 ep 2: loss 0.6317  200s  2.7 GB
+02:00:08 fold 0 ep 3: loss 0.6247  200s  2.7 GB
+02:03:28 fold 0 ep 4: loss 0.5807  200s  2.7 GB
+02:06:48 fold 0 ep 5: loss 0.5471  200s  2.7 GB
+02:10:04 fold 0 ep 6: loss 0.5441  196s  2.7 GB
+02:13:20 fold 0 ep 7: loss 0.5343  195s  2.7 GB

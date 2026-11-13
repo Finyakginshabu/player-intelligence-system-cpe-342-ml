@@ -229,3 +229,4 @@ equal-weight recipes only, keep only clear gains (> 0.002 LB). Candidates (all m
 (FCMAE), Hiera-B (MAE), EVA-02-B (MIM in22k). Also "V2-B × 4 alone" as a natural test of whether S still adds anything.
 - **Unused-fold confirmation (audit item 2, hard fold 3, non-dark):** S 0.9622, **V2-B 0.9696 (+0.0074)**, S+V2 0.9704 → the
   v26 recipe holds on a fold never used for any choice. EMA (decay 0.998) on fold 4: 0.9468 vs 0.9492 → no gain, not used.
+- 2026-11-13: full-data V2-B seeds 123 (loss 0.394, OK) and 2026 (**diverged**: epoch losses 1.29 / 1.57 / 1.42 / 1.04 / 0.72 / 0.50 vs ≈ 0.72 / 0.48 / 0.43 / 0.41 / 0.40 / 0.39 for the other seeds; test agreement 0.84 vs 0.89–0.905 between healthy seeds) → seed 2026 excluded. v28 = 0.5·S×4 + 0.5·V2-B×3 (471 rows differ from v26). Rule from now on: check every run's loss curve before using it.

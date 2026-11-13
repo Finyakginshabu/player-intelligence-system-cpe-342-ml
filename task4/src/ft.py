@@ -55,6 +55,7 @@ p.add_argument("--no-test", action="store_true")
 p.add_argument("--limit", type=int, default=0, help="smoke test: use this many train rows")
 p.add_argument("--seed", type=int, default=42)
 p.add_argument("--grad-ckpt", action="store_true")
+p.add_argument("--init", default="", help="encoder state dict loaded after creating the model (e.g. outputs/mim_<name>.pt)")
 A = p.parse_args()
 
 DEV = "cuda"
@@ -96,6 +97,9 @@ def make_model():
         m = timm.create_model(A.backbone, img_size=(A.h, A.w), **kw)  # ViT-style models need the input size
     except TypeError:
         m = timm.create_model(A.backbone, **kw)
+    if A.init:  # in-domain pretrained encoder (mim.py); the classifier head stays freshly initialised
+        miss, unexp = m.load_state_dict(torch.load(A.init, map_location="cpu"), strict=False)
+        log(f"init from {A.init}: {len(miss)} missing keys (head expected), {len(unexp)} unexpected")
     if A.grad_ckpt and hasattr(m, "set_grad_checkpointing"):
         m.set_grad_checkpointing(True)
     return m.to(DEV).to(memory_format=torch.channels_last)

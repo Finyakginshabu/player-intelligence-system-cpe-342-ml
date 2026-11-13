@@ -241,3 +241,20 @@ equal-weight recipes only, keep only clear gains (> 0.002 LB). Candidates (all m
 ### 2026-11-13 R8 results (LB yes/no tests, one family each)
 - V2-L: 0.85093 (−0.0001, no gain). **CAFormer-S36 in22k: 0.84962 (−0.0014, t4 ≈ −0.007) → hurts.** V2-B-384 not uploaded (same FCMAE family as V2-B/V2-L; no new information expected). Hiera not uploaded (undertrained: final loss 0.488 vs 0.395, test agreement 0.83, like the diverged seed).
 - Pattern over all family tests: only V2-B (masked FCMAE pretraining on ConvNeXt) helped on the shifted test; CLIP, a bigger V2, and CAFormer did not. v28 remains the best file; further blends of other families are unlikely to close the 0.0068 gap to #1.
+
+### 2026-11-13 night: legal levers after falling to 4th (#1 ML003 0.85787, us 0.85104)
+Task-4 diagnosis: train labels 39 / 14 / 18 / 19 / 10 % (7-11k / fiveN / freefried / pube / roblock), our test predictions
+18 / 25 / 15 / 25 / 17 %; 4,730 test rows (18 %) have conf < 0.7, spread over all class pairs (top pairs 7-11k↔fiveN 879,
+freefried↔pube 721). Test-adaptive fixes (pseudo-labels, test-prior EM) stay banned (rule 2) unless the TA allows them in writing.
+Legal candidates, each one LB yes/no test (keep only if > v28 + 0.002):
+- **v31 uniform prior** (`src/uniform_prior.py`, no test information): macro F1 weights classes equally, ft.py's class
+  weights leave an effective prior ∝ count^0.5 (0.289 / 0.172 / 0.194 / 0.199 / 0.146); divide it out. Held-out (non-dark,
+  equal-mix weighted): hard fold 4 0.9632 → 0.9627, hard fold 3 0.9605 → 0.9653 (mixed). 556 test rows change.
+  `submissions/sub_v31_t4_uniform.csv`.
+- **R9** (`src/queue_r9.sh`): V2-B with less supervised pre-fine-tuning. `f_v2bin1k_s42` (FCMAE + in1k ft): loss 0.398,
+  healthy; test agreement vs S 0.877 / V2-B 0.891 → v32 = (S×4 + V2-B×3 + in1k)/3, 1,115 rows vs v28,
+  `submissions/sub_v32_t4_v2bin1k.csv`. `f_v2bssl_s42` (pure FCMAE, 8 ep, lr 2e-4, layer decay 0.8) running.
+- **R10 in-domain masked pretraining** (`src/mim.py`, new; `ft.py --init`): SimMIM-style dense masking (32-px patches,
+  60 %), 1x1-conv + pixel-shuffle decoder (zero-init), MSE on per-patch-normalised masked pixels; TRAIN images only, test
+  never loaded. A: pure FCMAE → MIM 10 ep → fine-tune (vs R9 f_v2bssl). B: V2-B in22k → MIM 6 ep (lr 5e-5) → V2-B recipe
+  (vs f_v2base_s42). Smoke test: loss 0.98 → 0.93 in 3 short epochs; init loads all encoder keys (only head missing).

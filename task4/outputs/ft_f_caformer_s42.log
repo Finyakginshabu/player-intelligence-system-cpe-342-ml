@@ -1,0 +1,7 @@
+20:44:31 === f_caformer_s42: {'name': 'f_caformer_s42', 'backbone': 'caformer_s36.sail_in22k_ft_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 32, 'lr': 0.0001, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+20:54:11 fold 0 ep 0: loss 0.7217  579s  2.4 GB
+21:03:47 fold 0 ep 1: loss 0.5115  576s  2.4 GB
+21:13:41 fold 0 ep 2: loss 0.4628  594s  2.4 GB
+21:23:31 fold 0 ep 3: loss 0.4300  590s  2.4 GB
+21:33:03 fold 0 ep 4: loss 0.4081  572s  2.4 GB
+21:42:32 fold 0 ep 5: loss 0.3996  570s  2.4 GB

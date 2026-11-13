@@ -1,0 +1,7 @@
+20:29:36 === f_hierab_s42: {'name': 'f_hierab_s42', 'backbone': 'hiera_base_224.mae_in1k_ft_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 48, 'lr': 5e-05, 'wd': 0.05, 'h': 224, 'w': 224, 'drop_path': 0.1, 'layer_decay': 0.75, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+20:31:51 fold 0 ep 0: loss 1.1581  134s  2.0 GB
+20:34:08 fold 0 ep 1: loss 0.6111  137s  2.0 GB
+20:36:22 fold 0 ep 2: loss 0.5312  133s  2.0 GB
+20:38:36 fold 0 ep 3: loss 0.5023  135s  2.0 GB
+20:40:49 fold 0 ep 4: loss 0.4914  133s  2.0 GB
+20:43:04 fold 0 ep 5: loss 0.4884  134s  2.0 GB

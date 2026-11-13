@@ -261,3 +261,13 @@ Legal candidates, each one LB yes/no test (keep only if > v28 + 0.002):
 
 **2026-11-14: professor confirmed "no test-set usage for training" applies to Kaggle too.** The pseudo-labelling round
 (queue K1) was cancelled before it started; the `--pl` code was reverted. Only train-image methods from here on (R9, R10).
+
+### R11 (2026-11-14): the TA's advice — heavy augmentation, class imbalance, CNN + ViT ensemble (`src/queue_r11.sh`)
+New `ft.py` options: `--rot-max/--rot-p` (rotation; the data itself has up to ≈ 30°, our recipe used ±8° at p 0.3) and
+`--chperm` (random RGB channel order; the data's dominant channel is ⅓ each). Train images only.
+- Heavy, data-matched augmentation on ConvNeXt-S (8 epochs): rotation ±30° p 0.6, channel permutation 0.5, inversion 0.3,
+  hue 0.3, gray 0.1, erase 0.25, mixup/cutmix 0.3, crop ≥ 0.6. Earlier heavy test was on ConvNeXt-T only (held-out ±0).
+- Full class balancing: `--balance 1.0` (class weights max/count instead of their square root). Cheap version = v31.
+- ViT for the ensemble: EVA-02-B (MIM in22k → in22k → in1k; masked-image pretraining, which is what helped for CNNs),
+  lr 5e-5, layer decay 0.75, at 224×448 (16×32 patches).
+Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-data run for an LB test. Then R10.

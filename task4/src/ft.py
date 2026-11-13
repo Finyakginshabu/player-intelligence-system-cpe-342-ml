@@ -41,6 +41,9 @@ p.add_argument("--mix", type=float, default=0.0, help="probability of mixup/cutm
 p.add_argument("--hue", type=float, default=0.05, help="max hue rotation as a fraction of the colour circle")
 p.add_argument("--gray", type=float, default=0.0, help="probability of random grayscale")
 p.add_argument("--invert", type=float, default=0.05)
+p.add_argument("--rot-max", type=float, default=8.0, help="max random rotation in degrees (the data itself has up to ~30)")
+p.add_argument("--rot-p", type=float, default=0.3, help="probability of a random rotation")
+p.add_argument("--chperm", type=float, default=0.0, help="probability of a random RGB channel permutation (the data has them)")
 p.add_argument("--scale-min", type=float, default=0.75, help="min area fraction of the random crop")
 p.add_argument("--erase", type=float, default=0.0, help="probability of erasing one random box")
 p.add_argument("--balance", type=float, default=0.5, help="class weight = (max count / count) ** balance")
@@ -138,7 +141,7 @@ def train_tf(xb):
     area, ratio = U(A.scale_min, A.scale_max), torch.exp(U(math.log(1.7 / ASPECT), math.log(2.2 / ASPECT)))
     fw, fh = (area * ratio).sqrt().clamp(max=1.0), (area / ratio).sqrt().clamp(max=1.0)
     tx, ty = (1 - fw) * U(-1, 1), (1 - fh) * U(-1, 1)
-    rot = torch.where(U(0, 1) < 0.3, U(-8, 8), torch.zeros(B, device=DEV)) * math.pi / 180
+    rot = torch.where(U(0, 1) < A.rot_p, U(-A.rot_max, A.rot_max), torch.zeros(B, device=DEV)) * math.pi / 180
     x = warp(x, fw, fh, tx, ty, rot)
     # colour jitter (p = 0.8), skewed darker like the data
     on = (U(0, 1) < 0.8).float().view(B, 1, 1, 1)
@@ -161,6 +164,9 @@ def train_tf(xb):
         gm = (U(0, 1) < A.gray).view(B, 1, 1, 1)
         x = torch.where(gm, (0.299 * x[:, 0:1] + 0.587 * x[:, 1:2] + 0.114 * x[:, 2:3]).expand_as(x), x)
     x = torch.where((U(0, 1) < A.invert).view(B, 1, 1, 1), 1 - x, x)
+    if A.chperm > 0:  # random RGB channel order per image
+        perm = torch.rand(B, 3, device=DEV).argsort(1)
+        x = torch.where((U(0, 1) < A.chperm).view(B, 1, 1, 1), x.gather(1, perm.view(B, 3, 1, 1).expand_as(x)), x)
     sig = torch.where(U(0, 1) < 0.3, U(0, 0.06), torch.zeros(B, device=DEV)).view(B, 1, 1, 1)
     x = (x + torch.randn_like(x) * sig).clamp(0, 1)
     if A.erase > 0:

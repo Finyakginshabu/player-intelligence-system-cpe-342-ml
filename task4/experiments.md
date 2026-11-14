@@ -303,3 +303,6 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
   the datacard names + the real games they parody (Seven Knights, FiveM, Free Fire, PUBG, Roblox), 3 views per frame:
   train macro F1 **0.21** (chance), recall 0.02 / 0.35 / 0.45 / 0.02 / 0.81. The distorted 120×230 frames are too far
   from web screenshots → dropped, no upload (the WiSE-FT idea needs a usable zero-shot model).
+- **LB v39 (v37 + EVA-02-L × 1 seed as a 4th equal family) = 0.85586 = new best**, Δ +0.00263 vs v37 (t4 ≈ +0.013).
+  EVA-L agreement on test: vs S 0.859, V2-B 0.882, EVA-B×4 0.906. A bigger ViT helps where a bigger CNN (V2-L) did not.
+  Queue R15 (detached, survives session restarts): BEiT-v2-B → DINOv3-B → DeiT-III-B → EVA-02-L seed 7.

@@ -294,3 +294,12 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - 2026-11-14: user authorised fully automated uploads (≤ 5/day, one at a time, logged before the next, wrap up by ~22 Nov).
   Queue: R13 EVA-02-L × 2 seeds (≈ 16:00 / 18:50), then R14 ViT families BEiT-v2-B, DINOv3 ViT-B, DeiT-III-B (1 seed each,
   ≈ 50-60 min each), each judged by an LB family test.
+
+### 2026-11-14 afternoon: re-analysis after ML003 → 0.86750 (t4 ≈ 0.96 if their other tasks equal ours)
+- **Dark frames are not a lever:** test dark share (brightness < 25) **0.8 %** (train 1.6 %, 89 % of them 7-11k); hard fold 4
+  happens to hold a dark scene (10.6 % of its rows, accuracy 0.18 vs 0.96 non-dark), which is why its "all" score is low.
+  Fixing every dark test frame would be < +0.01 t4.
+- **Zero-shot CLIP (`src/zeroshot.py`, nothing trained; train labels only to score) FAILS:** ViT-L/14 OpenAI, prompts with
+  the datacard names + the real games they parody (Seven Knights, FiveM, Free Fire, PUBG, Roblox), 3 views per frame:
+  train macro F1 **0.21** (chance), recall 0.02 / 0.35 / 0.45 / 0.02 / 0.81. The distorted 120×230 frames are too far
+  from web screenshots → dropped, no upload (the WiSE-FT idea needs a usable zero-shot model).

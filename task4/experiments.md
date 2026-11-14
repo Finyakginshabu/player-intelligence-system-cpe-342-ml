@@ -282,3 +282,5 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
   6 epochs on train images, masked-patch loss 0.585 → 0.444, then the usual fine-tune, final loss 0.395 = healthy; 1,068 rows),
   `sub_v36_t4_heavy1` (966 rows). Test agreement vs v28: EVA 0.886, heavy 0.902, MIM 0.903.
 - `f_v2base_s2026` (from R8) **diverged** (fold-0 loss 1.04 at epoch 3, 0.50 at the end; agreement 0.84): never use it.
+- **LB v35 (in-domain MIM family) = 0.84997, Δ −0.00107 vs v28 (t4 ≈ −0.005) → dropped.** Continuing masked pretraining on
+  the train frames does not transfer to the shifted test (it adapts to the train scenes, not the test ones).

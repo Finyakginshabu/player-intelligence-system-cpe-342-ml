@@ -154,3 +154,10 @@ mean 3.79–3.82 per class) → "missingness as signal" not run.
 
 **Conclusion:** consistent with the independence check: NB with the current settings is at the task-2 ceiling on the new
 data (≈ 0.757–0.761). `final_pred.csv` unchanged. No further task-2 work planned.
+
+## 2026-11-14: non-monotone dependence check (CPU, ≈ 1 min)
+The 2026-11-13 check used Spearman (monotone only). Within each segment, binned mutual information between all 561 numeric
+pairs (10 quantile bins; discrete columns by value), against a shuffled-pair null: **MI mean 0.00189 vs null 0.00188**,
+5 of 2,244 class-pair tests above the null's 99.9th percentile (≈ 2 expected by chance, all tiny, all in segment 3).
+(A first pass that ranked binary columns with ties split by row order showed huge spurious MI: an artifact, fixed.)
+→ No hidden interactions either: naive Bayes stays the right model, **task 2 is at its ceiling** (≤ +0.004 F1 ≈ +0.001 LB).

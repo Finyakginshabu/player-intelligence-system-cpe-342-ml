@@ -311,3 +311,4 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - R15 `f_dinov3b_s42` (DINOv3 ViT-B, lr 5e-5): final loss 0.475 (a bit high), test agreement with v39 0.899 (EVA-L had 0.906 with v37 before its +0.013) → LB family test candidate for 2026-11-15.
 - R15 `f_deit3b_s42` (DeiT-III-B, lr 5e-5): **underfit** (loss 0.442, agreement with v39 0.870) → no upload. Pattern: patch-16 ViTs (BEiT-v2, DeiT-III, partly DINOv3) under-train at lr 5e-5 in 6 epochs, EVA-02 (patch 14, MIM) does not. R16: DeiT-III-L replaced by EVA-02-L M38M.
 - R15 `f_eva02l_s7`: final loss 0.3995, agreement with s42 0.941. `pred_v39_eval2.csv` = v39 with EVA-L × 2 seeds (221 rows differ) = first upload of 2026-11-15.
+- R16 `f_beitv2b_lr2e4_s42` (BEiT-v2-B, lr 2e-4): fits now (loss 0.408 vs 0.459 at 5e-5); test agreement with v39 (2-seed EVA-L) 0.875 → LB family test candidate. R17 queued after R16: DINOv3-B and DeiT-III-B at lr 2e-4, EVA-02-L seed 2026.

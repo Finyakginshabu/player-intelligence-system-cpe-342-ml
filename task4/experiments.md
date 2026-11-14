@@ -290,3 +290,7 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - R12: EVA-02-B seeds 7 / 123 / 2026 (same recipe, final loss 0.406-0.407, agreement with s42 0.934-0.936).
   **LB v37 (S×4 + V2-B×3 + EVA×4, equal family weights) = 0.85323 = new best** (+0.00036 vs v34, +0.00219 vs v28 → the
   ViT gain is real; t4 ≈ +0.011 over v28). `outputs/pred_s4_v2b3_eva4.csv`, `submission.csv` = v37.
+- **LB v38 (v37 models, family weights 1 : 1 : 2, ViT share ½) = 0.85327, Δ +0.00004 vs v37 → flat**; keep equal family weights.
+- 2026-11-14: user authorised fully automated uploads (≤ 5/day, one at a time, logged before the next, wrap up by ~22 Nov).
+  Queue: R13 EVA-02-L × 2 seeds (≈ 16:00 / 18:50), then R14 ViT families BEiT-v2-B, DINOv3 ViT-B, DeiT-III-B (1 seed each,
+  ≈ 50-60 min each), each judged by an LB family test.

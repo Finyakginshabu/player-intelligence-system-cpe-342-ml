@@ -284,3 +284,6 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - `f_v2base_s2026` (from R8) **diverged** (fold-0 loss 1.04 at epoch 3, 0.50 at the end; agreement 0.84): never use it.
 - **LB v35 (in-domain MIM family) = 0.84997, Δ −0.00107 vs v28 (t4 ≈ −0.005) → dropped.** Continuing masked pretraining on
   the train frames does not transfer to the shifted test (it adapts to the train scenes, not the test ones).
+- **LB v34 (EVA-02-B ViT family, 1 seed) = 0.85287, Δ +0.00183 vs v28 (t4 ≈ +0.009) = new best LB file** (just under the
+  0.002 keep bar, so it needs a confirmation: more EVA seeds should raise it if it is real). First third family that helps
+  (CLIP −0.012, CAFormer −0.007, in-domain MIM −0.005, V2-L ±0): the ViT is the different architecture, as the TA advised.

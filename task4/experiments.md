@@ -287,3 +287,6 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - **LB v34 (EVA-02-B ViT family, 1 seed) = 0.85287, Δ +0.00183 vs v28 (t4 ≈ +0.009) = new best LB file** (just under the
   0.002 keep bar, so it needs a confirmation: more EVA seeds should raise it if it is real). First third family that helps
   (CLIP −0.012, CAFormer −0.007, in-domain MIM −0.005, V2-L ±0): the ViT is the different architecture, as the TA advised.
+- R12: EVA-02-B seeds 7 / 123 / 2026 (same recipe, final loss 0.406-0.407, agreement with s42 0.934-0.936).
+  **LB v37 (S×4 + V2-B×3 + EVA×4, equal family weights) = 0.85323 = new best** (+0.00036 vs v34, +0.00219 vs v28 → the
+  ViT gain is real; t4 ≈ +0.011 over v28). `outputs/pred_s4_v2b3_eva4.csv`, `submission.csv` = v37.

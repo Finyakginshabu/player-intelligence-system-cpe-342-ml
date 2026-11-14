@@ -306,3 +306,5 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - **LB v39 (v37 + EVA-02-L × 1 seed as a 4th equal family) = 0.85586 = new best**, Δ +0.00263 vs v37 (t4 ≈ +0.013).
   EVA-L agreement on test: vs S 0.859, V2-B 0.882, EVA-B×4 0.906. A bigger ViT helps where a bigger CNN (V2-L) did not.
   Queue R15 (detached, survives session restarts): BEiT-v2-B → DINOv3-B → DeiT-III-B → EVA-02-L seed 7.
+- R15 `f_beitv2b_s42` (BEiT-v2-B, lr 5e-5, layer decay 0.75): **underfit** (final loss 0.459 vs ≈ 0.40; test agreement
+  with v39 0.82 vs 0.93 for EVA-B / EVA-L) → no upload. Retry at lr 2e-4 at the start of R16; BEiT-v2-L only if it fits.

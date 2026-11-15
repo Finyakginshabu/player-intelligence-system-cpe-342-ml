@@ -312,3 +312,17 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - R15 `f_deit3b_s42` (DeiT-III-B, lr 5e-5): **underfit** (loss 0.442, agreement with v39 0.870) → no upload. Pattern: patch-16 ViTs (BEiT-v2, DeiT-III, partly DINOv3) under-train at lr 5e-5 in 6 epochs, EVA-02 (patch 14, MIM) does not. R16: DeiT-III-L replaced by EVA-02-L M38M.
 - R15 `f_eva02l_s7`: final loss 0.3995, agreement with s42 0.941. `pred_v39_eval2.csv` = v39 with EVA-L × 2 seeds (221 rows differ) = first upload of 2026-11-15.
 - R16 `f_beitv2b_lr2e4_s42` (BEiT-v2-B, lr 2e-4): fits now (loss 0.408 vs 0.459 at 5e-5); test agreement with v39 (2-seed EVA-L) 0.875 → LB family test candidate. R17 queued after R16: DINOv3-B and DeiT-III-B at lr 2e-4, EVA-02-L seed 2026.
+
+### R16–R18 (2026-11-14 night → 2026-11-15)
+- Overnight runs (all exit 0, final loss / test agreement with v39 / with the 4-seed EVA-L mean): EVA-02-L s123 0.399 / 0.917 / 0.953,
+  s2026 0.400 / 0.928 / 0.961, EVA-02-L M38M 0.401 / 0.923 / 0.934, DINOv3-B lr 2e-4 0.420 / 0.914 / 0.897 (fits better than
+  0.475 at 5e-5), DeiT-III-B lr 2e-4 0.406 / 0.887 / 0.863, BEiT-v2-B lr 2e-4 0.408 / 0.873 / 0.854.
+- **LB v40 = v39 with EVA-02-L × 4 seeds = 0.85602** (Δ +0.00016, flat; kept as base for lower variance). Family tests today
+  each add one model as a 5th equal family to v40: `pred_v40_{beit,dino,deit,m38}.csv`; `pred_v40_noS.csv` drops ConvNeXt-S.
+- R18 (detached): EVA-02-B at 336 × 672 (`f_eva02b_hr_s42`) — tests whether finer patches on the 230 × 120 frames help.
+- LB v40 + BEiT-v2-B = 0.85566 (Δ −0.0004 vs v40) → BEiT family dropped.
+- LB v40 + DINOv3-B = 0.85670 (Δ +0.0007 vs v40): small positive (1 seed), below the bar → 2nd seed queued.
+- LB v40 + EVA-02-L M38M = 0.85741 (Δ +0.0014 vs v40): best so far, below the bar alone → v41 = v40 + M38M + DINOv3 (6 equal families).
+- **LB v41 = v40 + M38M + DINOv3-B (6 equal families) = 0.85780 = new best** (Δ +0.0018 vs v40). Pattern: different PRETRAINING DATA (M38M, LVD-1689M) adds diversity that helps on the shifted test; different fine-tune recipes / seeds of the same weights do not.
+- Queue R19 (detached, waits for R18): DINOv3-L (`vit_large_patch16_dinov3.lvd1689m`, lr 1e-4, ld 0.85, dp 0.2), DINOv3-B seed 7, EVA-02-L M38M seed 7.
+  Uploads 2026-11-16: EVA-02-B 336×672 test, DINOv3-L family test, v41 with 2-seed M38M + DINOv3-B, ConvNeXt-S drop test (`pred_v40_noS` rebuilt on v41).

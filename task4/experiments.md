@@ -326,3 +326,9 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - **LB v41 = v40 + M38M + DINOv3-B (6 equal families) = 0.85780 = new best** (Δ +0.0018 vs v40). Pattern: different PRETRAINING DATA (M38M, LVD-1689M) adds diversity that helps on the shifted test; different fine-tune recipes / seeds of the same weights do not.
 - Queue R19 (detached, waits for R18): DINOv3-L (`vit_large_patch16_dinov3.lvd1689m`, lr 1e-4, ld 0.85, dp 0.2), DINOv3-B seed 7, EVA-02-L M38M seed 7.
   Uploads 2026-11-16: EVA-02-B 336×672 test, DINOv3-L family test, v41 with 2-seed M38M + DINOv3-B, ConvNeXt-S drop test (`pred_v40_noS` rebuilt on v41).
+- R18 `f_eva02b_hr_s42` (EVA-02-B at 336×672): loss 0.404 (0.407 at 224×448), agreement with the 4-seed EVA-B mean 0.931 (≈ seed-to-seed 0.935)
+  → resolution changes little; LB test `pred_v42_hr` (+ as 7th family, 397 rows vs v41).
+- R19 `f_dinov3l_s42` (DINOv3-L, lr 1e-4): loss 0.414, agreement with v41 0.930, with DINOv3-B 0.914 → LB test `pred_v42_dinol` (380 rows).
+  `pred_v42_noS` = v41 without ConvNeXt-S (335 rows). R20 queued: DINOv2-L reg4 (LVD-142M).
+- Upload policy from 2026-11-15 (after user review): no uploads for seed-only changes (fold them into the next real test);
+  upload only files that test a new idea, even if that leaves slots unused. LB noise for a ≈ 650-row t4 change ≈ ±0.0004.

@@ -54,6 +54,9 @@ p.add_argument("--scene-balance",type=float, default=0.0,
 p.add_argument("--scene-k", type=int, default=10, help="CLIP k-means scenes per class used by --scene-balance")
 p.add_argument("--ema",type=float, default=0.0, help="EMA decay of weights (0 = off); EMA weights are used for prediction")
 p.add_argument("--smooth", type=float, default=0.1)
+p.add_argument("--lp-epochs", type=int, default=0, help="LP-FT: epochs training only the new head on the frozen backbone "
+               "before full fine-tuning (Kumar et al. 2022: less feature distortion, more robust under distribution shift)")
+p.add_argument("--lp-lr", type=float, default=1e-3, help="head lr during the LP stage (cosine to 0)")
 p.add_argument("--no-test", action="store_true")
 p.add_argument("--limit", type=int, default=0, help="smoke test: use this many train rows")
 p.add_argument("--seed", type=int, default=42)
@@ -221,6 +224,39 @@ def predict(model, X, idx=None, zooms=(1.0, 1.08, 1.15)):
     return out.cpu().numpy()
 
 
+def linear_probe(model, tr, cw, ytr):
+    """LP stage of LP-FT: train only the classifier head on frozen features (backbone in eval mode, same augmentation and
+    loss as fine-tuning), so full fine-tuning starts from a fitted head and distorts the pretrained features less."""
+    head = list(model.get_classifier().parameters())
+    for p_ in model.parameters():
+        p_.requires_grad_(False)
+    for p_ in head:
+        p_.requires_grad_(True)
+    steps = len(tr) // A.batch
+    opt = torch.optim.AdamW(head, lr=A.lp_lr, weight_decay=1e-4)
+    sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, A.lp_epochs * steps)
+    model.eval()
+    for ep in range(A.lp_epochs):
+        t0, tot = time.time(), 0.0
+        perm = torch.as_tensor(np.random.permutation(tr))
+        for b in range(steps):
+            bi = perm[b * A.batch:(b + 1) * A.batch]
+            x = train_tf(Xtr[bi])
+            y1h = F.one_hot(ytr[bi].to(DEV), 5).float() * (1 - A.smooth) + A.smooth / 5
+            with torch.autocast(DEV):
+                logp = F.log_softmax(model(x).float(), 1)
+            w = (y1h * cw).sum(1)
+            loss = (-(y1h * logp).sum(1) * w).sum() / w.sum()
+            opt.zero_grad(set_to_none=True)
+            loss.backward()
+            opt.step()
+            sched.step()
+            tot += loss.item()
+        log(f"LP ep {ep}: loss {tot / steps:.4f}  {time.time() - t0:.0f}s")
+    for p_ in model.parameters():
+        p_.requires_grad_(True)
+
+
 def train_fold(k, tr, va):
     model = make_model()
     if A.layer_decay < 1:
@@ -251,6 +287,8 @@ def train_fold(k, tr, va):
             m = ycls == c
             w[m] *= m.sum() / w[m].sum()
         scene_p = w / w.sum()
+    if A.lp_epochs > 0:
+        linear_probe(model, tr, cw, ytr)
     step = 0
     for ep in range(A.epochs):
         model.train()

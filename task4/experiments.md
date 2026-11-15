@@ -335,3 +335,9 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - R19/R20 done: DINOv3-B s7 loss 0.416, EVA-02-L M38M s7 0.400, DINOv2-L reg4 0.405 (agreement with v41 0.932, with DINOv3-L 0.927).
 - R21 (detached, 17:33 →): AIMv2-L (DFN-2B, autoregressive pretraining, lr 5e-5), DINOv2-L s7, DINOv3-L s7, EVA-02-L 336×672 (speculative).
   The waiter now also fires when a queue ends (GPU sat idle 16:40–17:33 after R20).
+- R21 `f_aimv2l_s42` (AIMv2-L, lr 5e-5): loss 0.424 (higher than EVA/DINO ≈ 0.40–0.41); LB family test candidate.
+- **New lever: LP-FT** (`ft.py --lp-epochs N --lp-lr`, default off): N epochs training only the head on the frozen backbone,
+  then the usual full fine-tune. Rationale: fine-tuning from a random head distorts pretrained features; LP-FT (Kumar et al.
+  2022) is reported to improve accuracy under distribution shift, which is our gap (CV 0.98 vs LB ≈ 0.90). Smoke test OK.
+- R22 (detached): bench `h_eva02b_lpft` (hard fold 4, compare with h_eva02b non-dark 0.9371), then EVA-02-B and EVA-02-L LP-FT
+  on all images, DINOv3-L s7, EVA-02-L 336×672. R21 stopped after AIMv2-L (its DINOv2-L s7 run is finishing on its own).

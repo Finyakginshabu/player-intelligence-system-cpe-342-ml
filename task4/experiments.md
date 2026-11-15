@@ -341,3 +341,6 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
   2022) is reported to improve accuracy under distribution shift, which is our gap (CV 0.98 vs LB ≈ 0.90). Smoke test OK.
 - R22 (detached): bench `h_eva02b_lpft` (hard fold 4, compare with h_eva02b non-dark 0.9371), then EVA-02-B and EVA-02-L LP-FT
   on all images, DINOv3-L s7, EVA-02-L 336×672. R21 stopped after AIMv2-L (its DINOv2-L s7 run is finishing on its own).
+- **LP-FT bench (hard fold 4): `h_eva02b_lpft` all 0.8557 / non-dark 0.9430 vs plain `h_eva02b` 0.8472 / 0.9371** (+0.009 / +0.006,
+  1 seed; LP stage 2 epochs, head lr 1e-3, losses 0.829 → 0.735; final FT loss 0.4015 vs 0.4039). Positive → R22 relaunched with
+  2nd LP-FT seeds (EVA-B s7, EVA-L s7) ahead of DINOv3-L s7 / EVA-L 336×672. LB test 2026-11-16: LP-FT EVA-B/L vs plain.

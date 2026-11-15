@@ -16,6 +16,9 @@ DL="--epochs 6 --batch 16 --lr 1e-4 --layer-decay 0.85 --drop-path 0.2"
 run() { echo "### $(date +%H:%M) start $1"; $PY ft.py --name "$@" --grad-ckpt > /dev/null 2>&1; echo "### $(date +%H:%M) end $1 (exit $?)"; }
 run f_eva02b_lpft_s42 --cv full --seed 42 $EVAB --lp-epochs 2
 run f_eva02l_lpft_s42 --cv full --seed 42 $EVAL --lp-epochs 2
+# 22:35: LP-FT bench h_eva02b_lpft = 0.9430 non-dark / 0.8557 all vs h_eva02b 0.9371 / 0.8472 → 2nd LP-FT seeds first
+run f_eva02b_lpft_s7 --cv full --seed 7 $EVAB --lp-epochs 2
+run f_eva02l_lpft_s7 --cv full --seed 7 $EVAL --lp-epochs 2
 run f_dinov3l_s7 --cv full --seed 7 --backbone vit_large_patch16_dinov3.lvd1689m $DL
 run f_eva02l_hr_s42 --cv full --seed 42 --backbone eva02_large_patch14_448.mim_in22k_ft_in22k_in1k --h 336 --w 672 --epochs 6 --batch 16 --lr 3e-5 --layer-decay 0.85 --drop-path 0.2
 echo "### $(date +%H:%M) QUEUE DONE"

@@ -332,3 +332,6 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
   `pred_v42_noS` = v41 without ConvNeXt-S (335 rows). R20 queued: DINOv2-L reg4 (LVD-142M).
 - Upload policy from 2026-11-15 (after user review): no uploads for seed-only changes (fold them into the next real test);
   upload only files that test a new idea, even if that leaves slots unused. LB noise for a ≈ 650-row t4 change ≈ ±0.0004.
+- R19/R20 done: DINOv3-B s7 loss 0.416, EVA-02-L M38M s7 0.400, DINOv2-L reg4 0.405 (agreement with v41 0.932, with DINOv3-L 0.927).
+- R21 (detached, 17:33 →): AIMv2-L (DFN-2B, autoregressive pretraining, lr 5e-5), DINOv2-L s7, DINOv3-L s7, EVA-02-L 336×672 (speculative).
+  The waiter now also fires when a queue ends (GPU sat idle 16:40–17:33 after R20).

@@ -365,3 +365,13 @@ the remaining prior completely.
 - On v43's test probabilities: /π^0.25 changes 208 rows, /π^0.5 changes 397 (all moves are out of 7-11k).
   Built, not uploaded: `pred_v44_t4_v43_prior025.csv`, `pred_v44_t4_v43_prior050.csv` (`blend_v41plus.py --prior=A`).
   `final_pred.csv` stays v43.
+
+### R23 (2026-11-16): HUD dropout (`ft.py --hud P`), runs on a teammate's RTX 4060 laptop
+On a share P of the training images, hide a random mix of top / bottom / left / right edge bands and one corner box (where
+game HUDs sit: health bars, minimap, buttons, score text), filled with the image's mean colour; at least one region per
+hidden image, centre never hidden. CPU check at P = 0.5: 50 % of images hidden, 26 % of the frame on average (5-62 %).
+Why: the models can recognise a game from its HUD alone; test frames where the HUD looks different or is barely visible
+(crowd scenes) then fail. Hiding it forces the network to use characters and environment too.
+Planned: `f_small_hud_s42` (ConvNeXt-S) and `f_dinov3b_hud_s42` (DINOv3-B), recipes otherwise identical; LB test = v43 +
+each as an extra family; optional held-out `h_small_hud` (hard fold 4, compare h_small non-dark 0.9492).
+

@@ -44,6 +44,9 @@ p.add_argument("--invert", type=float, default=0.05)
 p.add_argument("--rot-max", type=float, default=8.0, help="max random rotation in degrees (the data itself has up to ~30)")
 p.add_argument("--rot-p", type=float, default=0.3, help="probability of a random rotation")
 p.add_argument("--chperm", type=float, default=0.0, help="probability of a random RGB channel permutation (the data has them)")
+p.add_argument("--hud", type=float, default=0.0,
+               help="HUD dropout: probability per image of hiding edge bands / a corner (where game HUDs sit) with the "
+                    "image's mean colour, so the model must also use the scene itself (0 = off)")
 p.add_argument("--scale-min", type=float, default=0.75, help="min area fraction of the random crop")
 p.add_argument("--erase", type=float, default=0.0, help="probability of erasing one random box")
 p.add_argument("--balance", type=float, default=0.5, help="class weight = (max count / count) ** balance")
@@ -137,6 +140,28 @@ def eval_tf(xb, zoom=1.0):
     return ((warp(x, one, one, zero, zero, zero) - MEAN) / STD).contiguous(memory_format=torch.channels_last)
 
 
+def hud_dropout(x, U):
+    """Hide the regions where game HUDs usually sit (health bars, minimap, buttons, score text), on a share A.hud of the
+    images: each hidden image loses a random mix of a top band, bottom band, left band, right band and one corner box
+    (at least one region), filled with the image's mean colour. Train images only; the network then has to use the
+    characters / environment too, which is what the test frames without a familiar HUD need."""
+    B, _, H, W = x.shape
+    on = U(0, 1) < A.hud
+    yy = torch.linspace(0, 1, H, device=DEV).view(1, H, 1)
+    xx = torch.linspace(0, 1, W, device=DEV).view(1, 1, W)
+    v = lambda t: t.view(B, 1, 1)  # noqa: E731
+    pick = lambda p: on & (U(0, 1) < p)  # noqa: E731
+    top, bot, lef, rig, cor = pick(0.5), pick(0.5), pick(0.3), pick(0.3), pick(0.4)
+    none = on & ~(top | bot | lef | rig | cor)
+    bot = bot | none  # every hidden image loses at least one region (the bottom band)
+    cw, ch = U(0.15, 0.35), U(0.20, 0.40)
+    sx, sy = U(0, 1) < 0.5, U(0, 1) < 0.5
+    corner = (v(cor) & torch.where(v(sx), xx < v(cw), xx > 1 - v(cw)) & torch.where(v(sy), yy < v(ch), yy > 1 - v(ch)))
+    m = (v(top) & (yy < v(U(0.08, 0.25)))) | (v(bot) & (yy > 1 - v(U(0.08, 0.25)))) \
+        | (v(lef) & (xx < v(U(0.06, 0.20)))) | (v(rig) & (xx > 1 - v(U(0.06, 0.20)))) | corner
+    return torch.where(m.unsqueeze(1), x.mean((2, 3), keepdim=True), x)
+
+
 def train_tf(xb):
     x = to_float(xb)
     B = x.shape[0]
@@ -170,6 +195,8 @@ def train_tf(xb):
     if A.chperm > 0:  # random RGB channel order per image
         perm = torch.rand(B, 3, device=DEV).argsort(1)
         x = torch.where((U(0, 1) < A.chperm).view(B, 1, 1, 1), x.gather(1, perm.view(B, 3, 1, 1).expand_as(x)), x)
+    if A.hud > 0:
+        x = hud_dropout(x, U)
     sig = torch.where(U(0, 1) < 0.3, U(0, 0.06), torch.zeros(B, device=DEV)).view(B, 1, 1, 1)
     x = (x + torch.randn_like(x) * sig).clamp(0, 1)
     if A.erase > 0:

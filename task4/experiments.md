@@ -344,3 +344,13 @@ Each: hard fold 4 (non-dark, vs h_small 0.9492 / seed noise ±0.006) and a full-
 - **LP-FT bench (hard fold 4): `h_eva02b_lpft` all 0.8557 / non-dark 0.9430 vs plain `h_eva02b` 0.8472 / 0.9371** (+0.009 / +0.006,
   1 seed; LP stage 2 epochs, head lr 1e-3, losses 0.829 → 0.735; final FT loss 0.4015 vs 0.4039). Positive → R22 relaunched with
   2nd LP-FT seeds (EVA-B s7, EVA-L s7) ahead of DINOv3-L s7 / EVA-L 336×672. LB test 2026-11-16: LP-FT EVA-B/L vs plain.
+
+### 2026-11-16: GPU machine gone; LB family tests on top of v41 from saved probabilities (Mac, CPU)
+The RTX 5070 machine broke; the `test_f_*.npy` files were recovered via Google Drive. `src/blend_v41.py` rebuilds v41
+exactly (0 rows differ) and writes `final_pred.csv`; `src/blend_v41plus.py <tag> <family>` adds families on top of v41.
+LP-FT full runs, DINOv3-L s7 and EVA-02-L 336×672 never finished (no files).
+- **LB v42 d3l (v41 + DINOv3-L s42, 7 equal families) = 0.85815**, Δ +0.00035 vs v41 (380 rows): inside noise, kept as a candidate.
+- **LB v42 d2l (v41 + DINOv2-L × 2 seeds) = 0.85849**, Δ +0.00069 vs v41 (339 rows): best of the day so far, candidate.
+- **LB v42 aim (v41 + AIMv2-L) = 0.85733**, Δ −0.00047 vs v41 → dropped (also underfit: loss 0.424 vs ≈ 0.40).
+- **LB v42 evabhr (v41 + EVA-02-B 336×672) = 0.85713**, Δ −0.00067 vs v41 → dropped (resolution does not help).
+- **LB v43 (v41 + 2nd seeds M38M / DINOv3-B + DINOv2-L × 2 + DINOv3-L, 8 equal families) = 0.85865 = new best**, Δ +0.00085 vs v41 (560 rows). The two positive family tests stack. `final_pred.csv` = v43 (`blend_v41plus.py --final ...`).

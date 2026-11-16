@@ -7,9 +7,10 @@
 #   scene types that are rare in train (adversarial AUC 0.80 on CLIP embeddings), so random folds overstate accuracy.
 # - **Validation used here:** scenes = k-means clusters of CLIP ViT-L/14 embeddings inside each class; whole scenes are
 #   held out (`src/scene_cv.py`). Near-black frames (no game content, 0.8% of test) are excluded from the comparison.
-# - **Final (v41, LB 0.85780):** six pretraining families at equal weight, seeds averaged inside each family:
-#   ConvNeXt-S in22k × 4, ConvNeXt-V2-B FCMAE × 3, EVA-02-B × 4, EVA-02-L × 4, EVA-02-L M38M × 1, DINOv3-B × 1, each
-#   fine-tuned on **all** training images (`src/ft.py --cv full`); built by `src/blend_v41.py`. Families after the first
+# - **Final (v43, LB 0.85865):** eight pretraining families at equal weight, seeds averaged inside each family:
+#   ConvNeXt-S in22k × 4, ConvNeXt-V2-B FCMAE × 3, EVA-02-B × 4, EVA-02-L × 4, EVA-02-L M38M × 2, DINOv3-B × 2,
+#   DINOv2-L × 2, DINOv3-L × 1, each fine-tuned on **all** training images (`src/ft.py --cv full`); built by
+#   `src/blend_v41plus.py` (v41 = the first six with 1 seed for M38M / DINOv3-B, LB 0.85780). Families after the first
 #   two were chosen by LB family tests (held-out scenes did not predict the LB gains). Earlier steps kept for the report:
 #   ConvNeXt-S alone (v24, LB 0.84731, `outputs/pred_small4.csv`), S + V2-B (v26, LB 0.85066).
 # - Test images only ever pass through the trained networks (no fitting on test, project rule 2).
@@ -118,10 +119,9 @@ print("V2-B seeds:", len(v2), "| agreement:", round(float((v2[0].argmax(1) == v2
 # %%
 p_v26 = 0.5 * p_small + 0.5 * p_v2  # v26 (LB 0.85066), kept as an intermediate result
 np.save(OUT / "test_blend_s4_v2b2.npy", p_v26)
-# Final = v41 (LB 0.85780): 6 pretraining families at equal weight, built by src/blend_v41.py (writes final_pred.csv)
-import runpy  # noqa: E402
-
-runpy.run_path(str(ROOT / "task4" / "src" / "blend_v41.py"), run_name="__main__")
+# Final = v43 (LB 0.85865): v41's 6 families (+ 2nd seeds) + DINOv2-L + DINOv3-L, 8 families at equal weight
+subprocess.run([sys.executable, "blend_v41plus.py", "--final", "v43_t4_seeds_d2l_d3l", "seeds2",
+                "f_dinov2l_s42,f_dinov2l_s7", "f_dinov3l_s42"], check=True, cwd=ROOT / "task4" / "src")
 pred = pd.read_csv(OUT / "final_pred.csv")["prediction"].to_numpy()
 np.save(OUT / "test_final_small4.npy", p_small)
 pd.DataFrame({"id": test["stem"], "prediction": p_small.argmax(1)}).to_csv(OUT / "pred_small4.csv", index=False)

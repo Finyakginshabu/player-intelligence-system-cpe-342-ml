@@ -8,8 +8,9 @@ on all training images (`ft.py --cv full`); test images only pass through the tr
   EVA-02-L MIM in22k          f_eva02l_s{42,7,123,2026}
   EVA-02-L MIM M38M           f_eva02lm38_s42
   DINOv3 ViT-B LVD-1689M      f_dinov3b_lr2e4_s42
-Needs outputs/test_<name>.npy (GPU machine, gitignored). Checks the result against outputs/pred_v41_m38_dino.csv.
-Usage (from task4/src): python blend_v41.py
+Needs outputs/test_<name>.npy (gitignored; copies on Google Drive). Checks the result against outputs/pred_v41_m38_dino.csv.
+Usage (from task4/src): python blend_v41.py [--final]   (--final also writes final_pred.csv; the final file is now v43,
+see blend_v41plus.py)
 """
 import sys
 from pathlib import Path
@@ -32,13 +33,25 @@ FAMILIES = {
     "DINOv3-B": ["f_dinov3b_lr2e4_s42"],
 }
 
-fam = {k: np.mean([np.load(OUT / f"test_{n}.npy") for n in names], 0) for k, names in FAMILIES.items()}
-p = np.mean(list(fam.values()), 0)
-pred = p.argmax(1)
-for k, q in fam.items():
-    print(f"{k:14s} agreement with the blend {(q.argmax(1) == pred).mean():.4f}")
+def test_ids() -> pd.Series:
+    """Task-4 test ids in test.csv (ANS) order; falls back to the v41 file when data/ is not downloaded."""
+    ref_ids = pd.read_csv(OUT / "pred_v41_m38_dino.csv")["id"]
+    try:
+        ids = t4data.load_csv("test")["stem"]
+        assert (ids.to_numpy() == ref_ids.to_numpy()).all()
+        return ids
+    except FileNotFoundError:
+        return ref_ids
 
-ref = pd.read_csv(OUT / "pred_v41_m38_dino.csv")["prediction"].to_numpy()
-print("rows differing from the uploaded v41:", int((pred != ref).sum()))
-np.save(OUT / "test_blend_v41.npy", p)
-utils.write_final_pred(4, t4data.load_csv("test")["stem"], pred)
+
+if __name__ == "__main__":
+    fam = {k: np.mean([np.load(OUT / f"test_{n}.npy") for n in names], 0) for k, names in FAMILIES.items()}
+    p = np.mean(list(fam.values()), 0)
+    pred = p.argmax(1)
+    for k, q in fam.items():
+        print(f"{k:14s} agreement with the blend {(q.argmax(1) == pred).mean():.4f}")
+    ref = pd.read_csv(OUT / "pred_v41_m38_dino.csv")["prediction"].to_numpy()
+    print("rows differing from the uploaded v41:", int((pred != ref).sum()))
+    np.save(OUT / "test_blend_v41.npy", p)
+    if "--final" in sys.argv:
+        utils.write_final_pred(4, test_ids(), pred)

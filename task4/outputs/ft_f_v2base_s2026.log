@@ -1,0 +1,7 @@
+16:14:30 === f_v2base_s2026: {'name': 'f_v2base_s2026', 'backbone': 'convnextv2_base.fcmae_ft_in22k_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 32, 'lr': 0.0001, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 2026, 'grad_ckpt': True}
+16:25:05 fold 0 ep 0: loss 1.2863  634s  4.2 GB
+16:35:28 fold 0 ep 1: loss 1.5732  622s  4.2 GB
+16:46:00 fold 0 ep 2: loss 1.4245  632s  4.2 GB
+16:56:27 fold 0 ep 3: loss 1.0377  627s  4.2 GB
+17:06:55 fold 0 ep 4: loss 0.7203  628s  4.2 GB
+17:17:25 fold 0 ep 5: loss 0.4982  630s  4.2 GB

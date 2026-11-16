@@ -1,0 +1,7 @@
+17:33:57 === f_aimv2l_s42: {'name': 'f_aimv2l_s42', 'backbone': 'aimv2_large_patch14_224.apple_pt', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 16, 'lr': 5e-05, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': ''}
+17:52:34 fold 0 ep 0: loss 0.8835  1114s  6.5 GB
+18:11:07 fold 0 ep 1: loss 0.5329  1113s  6.5 GB
+18:29:42 fold 0 ep 2: loss 0.4821  1115s  6.5 GB
+18:48:16 fold 0 ep 3: loss 0.4559  1114s  6.5 GB
+19:07:00 fold 0 ep 4: loss 0.4332  1124s  6.5 GB
+19:25:35 fold 0 ep 5: loss 0.4244  1116s  6.5 GB

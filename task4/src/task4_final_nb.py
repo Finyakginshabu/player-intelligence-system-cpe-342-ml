@@ -7,9 +7,11 @@
 #   scene types that are rare in train (adversarial AUC 0.80 on CLIP embeddings), so random folds overstate accuracy.
 # - **Validation used here:** scenes = k-means clusters of CLIP ViT-L/14 embeddings inside each class; whole scenes are
 #   held out (`src/scene_cv.py`). Near-black frames (no game content, 0.8% of test) are excluded from the comparison.
-# - **Final:** 0.5 · ConvNeXt-S (ImageNet-22k) × 4 seeds + 0.5 · ConvNeXt-V2-B (FCMAE, ImageNet-22k) × 2 seeds, each
-#   fine-tuned on **all** training images (`src/ft.py --cv full`), probabilities averaged. ConvNeXt-S alone (= v24, LB
-#   0.84731) is kept as `outputs/pred_small4.csv`; the V2 blend adds +0.006 on held-out scenes (two V2 seeds, both up).
+# - **Final (v41, LB 0.85780):** six pretraining families at equal weight, seeds averaged inside each family:
+#   ConvNeXt-S in22k × 4, ConvNeXt-V2-B FCMAE × 3, EVA-02-B × 4, EVA-02-L × 4, EVA-02-L M38M × 1, DINOv3-B × 1, each
+#   fine-tuned on **all** training images (`src/ft.py --cv full`); built by `src/blend_v41.py`. Families after the first
+#   two were chosen by LB family tests (held-out scenes did not predict the LB gains). Earlier steps kept for the report:
+#   ConvNeXt-S alone (v24, LB 0.84731, `outputs/pred_small4.csv`), S + V2-B (v26, LB 0.85066).
 # - Test images only ever pass through the trained networks (no fitting on test, project rule 2).
 #
 # Training runs on the GPU venv (`.venv-gpu`) via `src/ft.py`; this notebook collects the saved results. Set
@@ -114,10 +116,13 @@ print("V2-B seeds:", len(v2), "| agreement:", round(float((v2[0].argmax(1) == v2
 # ## 4. Write `outputs/final_pred.csv` (id = image name, integers 0–4) + the alternatives
 
 # %%
-p_final = 0.5 * p_small + 0.5 * p_v2
-pred = p_final.argmax(1)
-final = utils.write_final_pred(TASK, test["stem"], pred)
-np.save(OUT / "test_blend_s4_v2b2.npy", p_final)
+p_v26 = 0.5 * p_small + 0.5 * p_v2  # v26 (LB 0.85066), kept as an intermediate result
+np.save(OUT / "test_blend_s4_v2b2.npy", p_v26)
+# Final = v41 (LB 0.85780): 6 pretraining families at equal weight, built by src/blend_v41.py (writes final_pred.csv)
+import runpy  # noqa: E402
+
+runpy.run_path(str(ROOT / "task4" / "src" / "blend_v41.py"), run_name="__main__")
+pred = pd.read_csv(OUT / "final_pred.csv")["prediction"].to_numpy()
 np.save(OUT / "test_final_small4.npy", p_small)
 pd.DataFrame({"id": test["stem"], "prediction": p_small.argmax(1)}).to_csv(OUT / "pred_small4.csv", index=False)
 print("final vs ConvNeXt-S alone (v24): rows that differ", int((pred != p_small.argmax(1)).sum()))

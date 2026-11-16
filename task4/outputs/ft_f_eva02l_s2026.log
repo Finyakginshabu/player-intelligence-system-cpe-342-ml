@@ -1,0 +1,7 @@
+03:35:45 === f_eva02l_s2026: {'name': 'f_eva02l_s2026', 'backbone': 'eva02_large_patch14_448.mim_in22k_ft_in22k_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 16, 'lr': 3e-05, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 2026, 'grad_ckpt': True, 'init': ''}
+04:00:45 fold 0 ep 0: loss 0.7610  1496s  6.3 GB
+04:25:28 fold 0 ep 1: loss 0.4549  1483s  6.3 GB
+04:50:04 fold 0 ep 2: loss 0.4263  1475s  6.3 GB
+05:14:39 fold 0 ep 3: loss 0.4143  1476s  6.3 GB
+05:39:14 fold 0 ep 4: loss 0.4034  1475s  6.3 GB
+06:03:49 fold 0 ep 5: loss 0.4001  1475s  6.3 GB

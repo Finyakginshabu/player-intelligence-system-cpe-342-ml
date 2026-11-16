@@ -1,0 +1,7 @@
+11:11:36 === f_dinov3b_lr2e4_s7: {'name': 'f_dinov3b_lr2e4_s7', 'backbone': 'vit_base_patch16_dinov3.lvd1689m', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 32, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.1, 'layer_decay': 0.75, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 7, 'grad_ckpt': True, 'init': ''}
+11:16:58 fold 0 ep 0: loss 0.9052  320s  2.3 GB
+11:22:16 fold 0 ep 1: loss 0.5121  318s  2.3 GB
+11:27:33 fold 0 ep 2: loss 0.4659  318s  2.3 GB
+11:32:55 fold 0 ep 3: loss 0.4362  321s  2.3 GB
+11:38:13 fold 0 ep 4: loss 0.4213  318s  2.3 GB
+11:43:32 fold 0 ep 5: loss 0.4163  319s  2.3 GB

@@ -1,0 +1,7 @@
+14:34:08 === f_dinov2l_s42: {'name': 'f_dinov2l_s42', 'backbone': 'vit_large_patch14_reg4_dinov2.lvd142m', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 16, 'lr': 0.0001, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': ''}
+14:53:23 fold 0 ep 0: loss 0.8321  1151s  6.1 GB
+15:12:42 fold 0 ep 1: loss 0.4914  1160s  6.1 GB
+15:32:11 fold 0 ep 2: loss 0.4522  1168s  6.1 GB
+15:51:39 fold 0 ep 3: loss 0.4304  1168s  6.1 GB
+16:10:59 fold 0 ep 4: loss 0.4134  1160s  6.1 GB
+16:30:12 fold 0 ep 5: loss 0.4049  1153s  6.1 GB

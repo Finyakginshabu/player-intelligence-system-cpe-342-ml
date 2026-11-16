@@ -1,0 +1,9 @@
+14:46:00 === h_small_ema: {'name': 'h_small_ema', 'backbone': 'convnext_small.fb_in22k_ft_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.998, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+14:49:15 fold 4 ep 0: loss 0.8099  val macro F1 0.7906 (non-dark 0.8711)  (EMA 0.8289)  195s  2.9 GB
+14:52:20 fold 4 ep 1: loss 0.5026  val macro F1 0.8003 (non-dark 0.8806)  (EMA 0.8372)  185s  2.9 GB
+14:55:24 fold 4 ep 2: loss 0.4454  val macro F1 0.8455 (non-dark 0.9317)  (EMA 0.8550)  184s  2.9 GB
+14:58:34 fold 4 ep 3: loss 0.4201  val macro F1 0.8717 (non-dark 0.9465)  (EMA 0.8684)  190s  2.9 GB
+15:01:39 fold 4 ep 4: loss 0.4054  val macro F1 0.8748 (non-dark 0.9558)  (EMA 0.8723)  185s  2.9 GB
+15:04:46 fold 4 ep 5: loss 0.4000  val macro F1 0.8704 (non-dark 0.9515)  (EMA 0.8714)  188s  2.9 GB
+15:05:06 fold 4: held-out macro F1 with TTA 0.8589 | non-dark 0.9468  recall [0.618, 1.0, 0.959, 0.93, 0.995]
+15:05:06 === h_small_ema [hard folds ['4']]: macro F1 mean 0.9468 +- 0.0000  [0.9468]

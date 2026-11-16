@@ -1,0 +1,9 @@
+23:31:29 === f_v2bssl_s42: {'name': 'f_v2bssl_s42', 'backbone': 'convnextv2_base.fcmae', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 8, 'batch': 32, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.1, 'layer_decay': 0.8, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+23:43:02 fold 0 ep 0: loss 1.4117  666s  4.2 GB
+23:53:26 fold 0 ep 1: loss 0.9633  623s  4.2 GB
+00:04:22 fold 0 ep 2: loss 0.8252  657s  4.2 GB
+00:14:54 fold 0 ep 3: loss 0.7600  632s  4.2 GB
+00:25:48 fold 0 ep 4: loss 0.7171  654s  4.2 GB
+00:36:23 fold 0 ep 5: loss 0.6974  634s  4.2 GB
+00:46:50 fold 0 ep 6: loss 0.6747  628s  4.2 GB
+00:57:13 fold 0 ep 7: loss 0.6678  622s  4.2 GB

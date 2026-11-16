@@ -1,0 +1,9 @@
+12:53:22 === h_small_sb10_s7: {'name': 'h_small_sb10_s7', 'backbone': 'convnext_small.fb_in22k_ft_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 1.0, 'scene_k': 40, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 7, 'grad_ckpt': True}
+12:56:34 fold 4 ep 0: loss 0.7931  val macro F1 0.8512 (non-dark 0.9103)  191s  2.7 GB
+12:59:31 fold 4 ep 1: loss 0.4862  val macro F1 0.8543 (non-dark 0.9160)  177s  2.7 GB
+13:02:31 fold 4 ep 2: loss 0.4500  val macro F1 0.8536 (non-dark 0.9283)  179s  2.7 GB
+13:05:30 fold 4 ep 3: loss 0.4219  val macro F1 0.8496 (non-dark 0.9347)  180s  2.7 GB
+13:08:33 fold 4 ep 4: loss 0.4067  val macro F1 0.8640 (non-dark 0.9452)  183s  2.7 GB
+13:11:37 fold 4 ep 5: loss 0.4039  val macro F1 0.8585 (non-dark 0.9420)  183s  2.7 GB
+13:11:56 fold 4: held-out macro F1 with TTA 0.8501 | non-dark 0.9355  recall [0.599, 1.0, 0.953, 0.917, 0.998]
+13:11:56 === h_small_sb10_s7 [hard folds ['4']]: macro F1 mean 0.9355 +- 0.0000  [0.9355]

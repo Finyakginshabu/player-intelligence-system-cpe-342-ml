@@ -1,0 +1,7 @@
+20:13:54 === f_beitv2b_lr2e4_s42: {'name': 'f_beitv2b_lr2e4_s42', 'backbone': 'beitv2_base_patch16_224.in1k_ft_in22k_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 32, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.1, 'layer_decay': 0.75, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': ''}
+20:18:55 fold 0 ep 0: loss 1.0625  299s  2.2 GB
+20:23:52 fold 0 ep 1: loss 0.5533  297s  2.2 GB
+20:28:49 fold 0 ep 2: loss 0.4777  297s  2.2 GB
+20:33:45 fold 0 ep 3: loss 0.4373  296s  2.2 GB
+20:38:42 fold 0 ep 4: loss 0.4161  297s  2.2 GB
+20:43:39 fold 0 ep 5: loss 0.4080  296s  2.2 GB

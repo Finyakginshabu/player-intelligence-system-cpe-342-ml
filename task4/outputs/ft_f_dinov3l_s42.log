@@ -1,0 +1,7 @@
+09:21:46 === f_dinov3l_s42: {'name': 'f_dinov3l_s42', 'backbone': 'vit_large_patch16_dinov3.lvd1689m', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 16, 'lr': 0.0001, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': ''}
+09:38:29 fold 0 ep 0: loss 0.9368  1001s  6.0 GB
+09:55:06 fold 0 ep 1: loss 0.4955  997s  6.0 GB
+10:11:45 fold 0 ep 2: loss 0.4520  998s  6.0 GB
+10:28:31 fold 0 ep 3: loss 0.4325  1006s  6.0 GB
+10:45:06 fold 0 ep 4: loss 0.4190  995s  6.0 GB
+11:01:35 fold 0 ep 5: loss 0.4136  989s  6.0 GB

@@ -1,0 +1,7 @@
+07:03:24 === f_eva02b_hr_s42: {'name': 'f_eva02b_hr_s42', 'backbone': 'eva02_base_patch14_448.mim_in22k_ft_in22k_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 16, 'lr': 5e-05, 'wd': 0.05, 'h': 336, 'w': 672, 'drop_path': 0.1, 'layer_decay': 0.75, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': ''}
+07:23:54 fold 0 ep 0: loss 0.7652  1229s  2.8 GB
+07:44:21 fold 0 ep 1: loss 0.4707  1227s  2.8 GB
+08:04:47 fold 0 ep 2: loss 0.4338  1226s  2.8 GB
+08:25:13 fold 0 ep 3: loss 0.4176  1226s  2.8 GB
+08:45:50 fold 0 ep 4: loss 0.4087  1237s  2.8 GB
+09:06:53 fold 0 ep 5: loss 0.4039  1263s  2.8 GB

@@ -1,0 +1,7 @@
+03:06:23 === f_deit3b_lr2e4_s42: {'name': 'f_deit3b_lr2e4_s42', 'backbone': 'deit3_base_patch16_224.fb_in22k_ft_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 32, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.1, 'layer_decay': 0.75, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': ''}
+03:10:51 fold 0 ep 0: loss 0.8023  267s  2.2 GB
+03:15:17 fold 0 ep 1: loss 0.4919  267s  2.2 GB
+03:19:46 fold 0 ep 2: loss 0.4487  269s  2.2 GB
+03:24:14 fold 0 ep 3: loss 0.4248  268s  2.2 GB
+03:28:42 fold 0 ep 4: loss 0.4120  268s  2.2 GB
+03:33:09 fold 0 ep 5: loss 0.4062  267s  2.2 GB

@@ -1,0 +1,9 @@
+11:56:20 === h_small_sb10: {'name': 'h_small_sb10', 'backbone': 'convnext_small.fb_in22k_ft_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 6, 'batch': 48, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scene_balance': 1.0, 'scene_k': 40, 'ema': 0.0, 'smooth': 0.1, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True}
+11:59:28 fold 4 ep 0: loss 0.7917  val macro F1 0.8015 (non-dark 0.8688)  187s  2.7 GB
+12:02:27 fold 4 ep 1: loss 0.4844  val macro F1 0.9052 (non-dark 0.9198)  178s  2.7 GB
+12:05:27 fold 4 ep 2: loss 0.4463  val macro F1 0.8531 (non-dark 0.9290)  181s  2.7 GB
+12:08:25 fold 4 ep 3: loss 0.4203  val macro F1 0.8478 (non-dark 0.9322)  178s  2.7 GB
+12:11:22 fold 4 ep 4: loss 0.4070  val macro F1 0.8681 (non-dark 0.9528)  177s  2.7 GB
+12:14:36 fold 4 ep 5: loss 0.4034  val macro F1 0.8711 (non-dark 0.9565)  194s  2.7 GB
+12:14:55 fold 4: held-out macro F1 with TTA 0.8653 | non-dark 0.9541  recall [0.615, 1.0, 0.965, 0.947, 1.0]
+12:14:55 === h_small_sb10 [hard folds ['4']]: macro F1 mean 0.9541 +- 0.0000  [0.9541]

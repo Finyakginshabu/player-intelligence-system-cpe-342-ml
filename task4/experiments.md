@@ -354,3 +354,14 @@ LP-FT full runs, DINOv3-L s7 and EVA-02-L 336×672 never finished (no files).
 - **LB v42 aim (v41 + AIMv2-L) = 0.85733**, Δ −0.00047 vs v41 → dropped (also underfit: loss 0.424 vs ≈ 0.40).
 - **LB v42 evabhr (v41 + EVA-02-B 336×672) = 0.85713**, Δ −0.00067 vs v41 → dropped (resolution does not help).
 - **LB v43 (v41 + 2nd seeds M38M / DINOv3-B + DINOv2-L × 2 + DINOv3-L, 8 equal families) = 0.85865 = new best**, Δ +0.00085 vs v41 (560 rows). The two positive family tests stack. `final_pred.csv` = v43 (`blend_v41plus.py --final ...`).
+
+### 2026-11-16 evening: balanced-prior decision rule (logit adjustment, Menon et al. 2021)
+Macro F1 weighs the 5 games equally, but the training mix is 39 % 7-11k, and our networks keep about π^0.5 of that prior
+(class weights (max/count)^0.5). Rule: argmax p / π^A with the TRAINING shares π (no test information); A = 0.5 removes
+the remaining prior completely.
+- Held-out scenes (non-dark, equal family mean):
+  hard fold 4 (S×2, V2-B×2, EVA-B, DINOv3-B): plain 0.9526 → /π^0.25 0.9501 → /π^0.5 0.9468 (equal-mix 0.9597 → 0.9590 → 0.9579);
+  hard fold 3 (S, V2-B): 0.9704 → 0.9716 → 0.9729 (equal-mix 0.9605 → 0.9624 → 0.9653). **Mixed: one fold down, one up.**
+- On v43's test probabilities: /π^0.25 changes 208 rows, /π^0.5 changes 397 (all moves are out of 7-11k).
+  Built, not uploaded: `pred_v44_t4_v43_prior025.csv`, `pred_v44_t4_v43_prior050.csv` (`blend_v41plus.py --prior=A`).
+  `final_pred.csv` stays v43.

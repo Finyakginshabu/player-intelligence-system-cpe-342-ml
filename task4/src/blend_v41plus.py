@@ -4,6 +4,9 @@ Usage (from task4/src): python blend_v41plus.py [--final] <tag> <family spec> [<
   family spec = comma-separated run names averaged as one family, e.g. f_dinov2l_s42,f_dinov2l_s7
   special spec "seeds2" = use the 2nd seeds inside v41's M38M and DINOv3-B families (no new family)
   --final = also write outputs/final_pred.csv
+  --prior=A = balanced-prior decision rule: argmax p / pi^A, pi = TRAINING class shares (no test information).
+              Our networks are trained with class weights (max/count)^0.5, so they carry a prior of about pi^0.5:
+              A = 0.5 removes it completely (equal priors, what macro F1 assumes); A = 0.25 leaves pi^0.25.
 Writes outputs/pred_<tag>.csv and submissions/sub_<tag>.csv (= sub_v41 with only the task4 column replaced).
 Needs only the saved test probabilities (outputs/test_<run>.npy); no data/ folder, no GPU.
 
@@ -24,8 +27,10 @@ from common import utils  # noqa: E402
 
 OUT = t4data.OUT
 SUBS = t4data.ROOT / "submissions"
-args = [a for a in sys.argv[1:] if a != "--final"]
+args = [a for a in sys.argv[1:] if a != "--final" and not a.startswith("--prior=")]
 tag, specs = args[0], args[1:]
+PRIOR_A = next((float(a.split("=")[1]) for a in sys.argv[1:] if a.startswith("--prior=")), 0.0)
+TRAIN_SHARE = np.array([12429, 4407, 5596, 5926, 3188]) / 31546  # label counts of train.csv (7-11k ... roblock)
 fams = {k: list(v) for k, v in FAMILIES.items()}
 for s in specs:
     if s == "seeds2":
@@ -34,6 +39,9 @@ for s in specs:
     else:
         fams[s] = s.split(",")
 p = np.mean([np.mean([np.load(OUT / f"test_{n}.npy") for n in names], 0) for names in fams.values()], 0)
+if PRIOR_A:
+    p = p / TRAIN_SHARE ** PRIOR_A
+    p = p / p.sum(1, keepdims=True)
 pred = p.argmax(1)
 
 v41 = pd.read_csv(OUT / "pred_v41_m38_dino.csv")

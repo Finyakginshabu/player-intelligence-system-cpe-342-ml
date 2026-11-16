@@ -1,4 +1,4 @@
-# Task 4 recipe: v43 (public LB 0.85865, task 4 ≈ 0.926 macro F1)
+# Task 4 recipe: v43
 
 **Idea:** fine-tune strong pretrained backbones on all training images, then average their predicted probabilities
 across 8 "families". A family is one pretrained model, averaged over its seeds. The families differ mainly in their

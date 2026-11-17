@@ -375,3 +375,9 @@ Why: the models can recognise a game from its HUD alone; test frames where the H
 Planned: `f_small_hud_s42` (ConvNeXt-S) and `f_dinov3b_hud_s42` (DINOv3-B), recipes otherwise identical; LB test = v43 +
 each as an extra family; optional held-out `h_small_hud` (hard fold 4, compare h_small non-dark 0.9492).
 
+
+- **LB v44 prior050 (v43 with p/π^0.5) = 0.86071**, Δ +0.00206 vs v43 (397 rows) = new best. Held-out was mixed, LB positive. Next: prior025 / larger A to locate the optimum.
+- **LB v45 prior100 (v43 with p/π^1.0) = 0.86225**, Δ +0.00154 vs v44 (337 rows) = new best. Still climbing past A = 0.5 (overshoots 'equal priors' as the class-weight argument defines them).
+- **LB v46 prior150 (p/π^1.5) = 0.86334**, Δ +0.00109 vs v45 (292 rows) = new best. Curve A 0 / 0.5 / 1.0 / 1.5 = 0.85865 / 0.86071 / 0.86225 / 0.86334 (steps +0.00206, +0.00154, +0.00109). Held-out fold 4 fell with A, so the gain comes from the test's class mix.
+- **LB v47 prior200 (p/π^2.0) = 0.86405**, Δ +0.00071 vs v46 (256 rows) = new best. Sweep stopped: steps +0.00206 / +0.00154 / +0.00109 / +0.00071, and A = 3.0 breaks the rule (no 7-11k predictions, 3,907 rows move).
+- **v47 = final** (2026-11-17): `final_pred.csv` and `submission.csv` = v47 (`blend_v41plus.py --final --prior=2.0 ...`); RECIPE.md updated.

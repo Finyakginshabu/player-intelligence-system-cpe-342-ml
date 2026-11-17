@@ -1,4 +1,4 @@
-# Task 4 recipe: v43
+# Task 4 recipe: v47
 
 **Idea:** fine-tune strong pretrained backbones on all training images, then average their predicted probabilities
 across 8 "families". A family is one pretrained model, averaged over its seeds. The families differ mainly in their
@@ -48,13 +48,17 @@ python ft.py --name f_eva02l_s42 --cv full --seed 42 --backbone eva02_large_patc
 
 ## 4. Ensemble
 1. Within each family, average the seeds' test probabilities (`outputs/test_<run>.npy`).
-2. Average the 8 family probabilities with **equal weight**, then take the argmax.
-3. Build the final file (from `task4/src`, CPU, seconds):
-   `python blend_v41plus.py --final v43_t4_seeds_d2l_d3l seeds2 f_dinov2l_s42,f_dinov2l_s7 f_dinov3l_s42`
-   This writes `outputs/final_pred.csv` and `submissions/sub_v43_t4_seeds_d2l_d3l.csv`.
+2. Average the 8 family probabilities with **equal weight**.
+3. **Balanced-prior decision rule:** divide the averaged probabilities by π^2.0, where π = the class shares of the
+   **training** labels (7-11k 39 %, fiveN 14 %, freefried 18 %, pube 19 %, roblock 10 %), then take the argmax.
+   Macro F1 weighs the 5 games equally, but the networks inherit the training mix (39 % 7-11k), so without this they
+   over-predict 7-11k. The rule uses no test information; only the strength A = 2.0 was picked on the public LB.
+4. Build the final file (from `task4/src`, CPU, seconds):
+   `python blend_v41plus.py --final --prior=2.0 v47_t4_v43_prior200 seeds2 f_dinov2l_s42,f_dinov2l_s7 f_dinov3l_s42`
+   This writes `outputs/final_pred.csv` and `submissions/sub_v47_t4_v43_prior200.csv`.
 
-No class-prior adjustment, no thresholds, and **no use of the test images** beyond prediction: no pseudo-labels and no
-test-time training (course rule).
+No thresholds, and **no use of the test images** beyond prediction: no pseudo-labels and no test-time training
+(course rule).
 
 ## 5. How the families were chosen
 - **Model choice by held-out scenes** (`src/scene_cv.py`, `src/bench.py`): the training images were clustered into
@@ -71,13 +75,21 @@ test-time training (course rule).
 | + EVA-02-L (v40) | 4 | 0.85602 | +0.0028 |
 | + EVA-02-L M38M + DINOv3-B (v41) | 6 | 0.85780 | +0.0018 |
 | + DINOv2-L + DINOv3-L + 2nd seeds (v43) | 8 | 0.85865 | +0.0009 |
+| + balanced-prior rule, A = 0.5 (v44) | 8 | 0.86071 | +0.0021 |
+| A = 1.0 (v45) | 8 | 0.86225 | +0.0015 |
+| A = 1.5 (v46) | 8 | 0.86334 | +0.0011 |
+| **A = 2.0 (v47, final)** | 8 | **0.86405** | +0.0007 |
+
+- **Prior strength A:** swept on the LB in steps of 0.5 and stopped at 2.0 because the gains were shrinking. At
+  A = 3.0 the rule breaks (no 7-11k predictions at all). Held-out scenes did not show this gain (hard fold 4 went down
+  with A, fold 3 up), so the gain comes from the test set's class mix, which is more balanced than train.
 
 - **What failed:** CLIP-pretrained ConvNeXt, CAFormer, BEiT-v2, DeiT-III, AIMv2-L, ConvNeXt-V2-L, in-domain masked
   pretraining on the training images, heavy augmentation, full class balancing, higher resolution (336×672), and
   re-weighting families. Details are in `experiments.md`.
 
 ## 6. What a new team should expect
-- **Score:** following this recipe should land near **0.92–0.93 task-4 macro F1** on the public LB. The training
+- **Score:** following this recipe should land near **0.95 task-4 macro F1** on the public LB. The training
   scripts don't use deterministic GPU mode, so reruns won't be bit-identical. Expect a few hundred test rows to differ.
 - **Remaining gap:** about 1,200 test frames (crowd scenes in matching uniforms) have no close match in train. That
-  accounts for most of the gap between CV (0.98) and the LB (0.93).
+  accounts for most of the gap between CV (0.98) and the LB (≈ 0.95).

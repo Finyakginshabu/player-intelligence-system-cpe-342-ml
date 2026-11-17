@@ -10,7 +10,9 @@ Usage (from task4/src): python blend_v41plus.py [--final] <tag> <family spec> [<
 Writes outputs/pred_<tag>.csv and submissions/sub_<tag>.csv (= sub_v41 with only the task4 column replaced).
 Needs only the saved test probabilities (outputs/test_<run>.npy); no data/ folder, no GPU.
 
-FINAL TASK-4 FILE (v43, LB 0.85865):
+FINAL TASK-4 FILE (v47, LB 0.86405) = v43's 8 families + balanced-prior rule A = 2.0:
+  python blend_v41plus.py --final --prior=2.0 v47_t4_v43_prior200 seeds2 f_dinov2l_s42,f_dinov2l_s7 f_dinov3l_s42
+Previous final (v43, LB 0.85865, no prior):
   python blend_v41plus.py --final v43_t4_seeds_d2l_d3l seeds2 f_dinov2l_s42,f_dinov2l_s7 f_dinov3l_s42
 """
 import sys

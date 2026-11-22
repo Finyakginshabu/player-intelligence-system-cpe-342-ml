@@ -113,3 +113,24 @@ Reference: twostage_ms_cat (both stages × 3 seeds + CatBoost gate) **0.78843 ±
 
 **Conclusion:** the gate cannot be improved by tuning or thresholds (it is calibrated and its signal is limited, round 4),
 and the missing-segment rows cannot be worth more than +0.0004. Task 3 stays at 0.7884; no further work planned.
+
+## Round 8 (2026-11-19): exact identities between columns (`src/experiments_r8.py`, CPU)
+The data obey two exact row identities (relative error < 1e-15 on complete rows): `historical_spending = max(total_transactions, 1)
+x avg_transaction_value` (rows with 0 transactions store avg = historical) and `purchases_on_discount = total_transactions x
+discount_rate_used`. Each column is about 5.8% missing at random, so most gaps can be filled exactly from the row itself (no target,
+no other rows; identical for train and test). After the fill: historical 6,035 -> 393 missing (train), total_transactions
+6,067 -> 204, avg 5,991 -> 410, purchases_on_discount 6,083 -> 370, discount_rate 6,103 -> 433; test 1,506 -> 95 etc.; the
+identities still hold (max relative error 7e-14). Also: prev_month_spending / historical_spending lies in 0.30-0.40.
+
+| Date | Change (two-stage median, single seed, same folds) | CV NMAE | Δ / folds up |
+|---|---|---|---|
+| 2026-11-19 | raw features (reproduces round 3's 0.7878) | 0.78777 ± 0.0037 | - |
+| 2026-11-19 | identity-filled features | **0.78937 ± 0.0041** | **+0.00160, 5/5 folds** (+0.0027 / +0.0004 / +0.0024 / +0.0019 / +0.0006) |
+| 2026-11-19 | identity-filled + stage 2 on the ratio to history (`src/experiments_r8b.py`): quantile models of log1p(y) - log1p(ref), ref = prev_month_spending, else historical x median(prev / historical), else 0 | **0.79160 ± 0.0046** | **+0.00223 vs filled, 5/5 folds** (+0.0008 / +0.0024 / +0.0031 / +0.0024 / +0.0025); +0.0038 vs raw |
+| 2026-11-19 | round 8b model x 3 LightGBM seeds (42 / 7 / 123; stage-1 p averaged, stage-2 quantiles averaged in log space; `src/experiments_r8c.py`) | **0.79175 ± 0.0046** (seeds alone 0.79160 / 0.79160 / 0.79136) | +0.0033 vs the current final twostage_ms_cat (0.78843) |
+| 2026-11-19 | + cap at the training maximum 300,000 (fixed rule, not tuned; 7 OOF rows / 1 test row above it) | **0.79188** | +0.00013 |
+
+Candidate `submissions/sub_v52_t3_identity_ratio.csv` = v50 with task 3 from `outputs/pred_twostage_r8_ratio_ms_cap.csv` (12,908
+rows change, mean |diff| 541 THB, 155 zero-gate flips). Expected LB ≈ +0.0007 (task-3 CV +0.0035 / 5).
+
+**LB (2026-11-19 22:55 Thai): v52 = 0.86460, Δ +0.00054 vs v50 (0.86406) → implied task-3 LB +0.0027 for CV +0.0035, the CV gain carries over. Adopted: `outputs/final_pred.csv` = `outputs/pred_twostage_r8_ratio_ms_cap.csv`.**

@@ -1,4 +1,38 @@
-# Task 4 recipe: v47
+# Task 4 recipe: v61
+
+**Final file = v61 (LB 0.86586, 2026-11-22)** = v58 + two giant families with the same near-native recipe (round 4,
+`build_cloud_kit.py`, last 12 blocks trained with `ft.py --freeze-blocks`): DINOv2-g/14 reg4 at 126×238 × seeds 42 / 7 / 123
+and DINOv3 ViT-H+/16 at 144×272 × seeds 42 / 7 / 123; 13 equal families, prior rule A = 2.0. Build = the v58 command with the
+two extra families `f_dinov2g_n126_s42,f_dinov2g_n126_s7,f_dinov2g_n126_s123` and
+`f_dinov3hp_n144_s42,f_dinov3hp_n144_s7,f_dinov3hp_n144_s123` and the tag `v61_t4_giants` (exact command: `src/task4_final_nb.py`,
+checked 2026-11-22: identical `final_pred.csv`). Hedge for the 2nd final selection: the same families at `--prior=1.0` =
+`sub_v62_t4_giants_prior100.csv` (LB 0.86431).
+
+**Previous final = v58 (LB 0.86514, 2026-11-22)** = v55 + 3rd seeds (s123) in the DINOv3-L-new and DINOv2-L-new families + an
+11th family, EVA-02-L new recipe (`EVAL_N` in `build_cloud_kit.py`: 126×238, 15 epochs, HUD 0.7, LP-FT 2 epochs) × seeds
+42 / 7 / 123; prior rule A = 2.0. Build = the v55 command below with `f_dinov3l_n144_s123` and `f_dinov2l_n126_s123` added to
+those two families, the extra family `f_eva02l_n126_s42,f_eva02l_n126_s7,f_eva02l_n126_s123`, and the tag `v58_t4_evaln`;
+then `make_submission.py --base submissions/sub_v55_t4_r2fams.csv --replace task4=task4/outputs/pred_v58_t4_evaln.csv`.
+Its A = 1.0 version = `sub_v60_t4_v58_prior100.csv` (LB 0.86326).
+
+**Previous final = v55 (LB 0.86505, 2026-11-21)** = v50 + two more families from the round-2 recipes (`build_cloud_kit.py`
+D3L_N / D2L_N: DINOv3-L at 144×272, 18 epochs, and DINOv2-L reg4 at 126×238, 15 epochs, both HUD dropout 0.7, 2 seeds each)
++ EVA-02-L LP-FT s42 as a 5th EVA-02-L seed; 10 equal families, prior rule A = 2.0. Build (from `task4/src`, bash):
+```
+python blend_v41plus.py --final --prior=2.0 v55_t4_r2fams --drop=ConvNeXt-S --drop=EVA-02-B --drop=DINOv3-B seeds2 \
+  f_small_s42,f_small_s7,f_small_s123,f_small_s2026,f_small_hud_s42 \
+  f_eva02b_s42,f_eva02b_s7,f_eva02b_s123,f_eva02b_s2026,f_eva02b_lpft_s42,f_eva02b_lpft_s7 \
+  f_dinov3b_lr2e4_s42,f_dinov3b_lr2e4_s7,f_dinov3b_hud_s42 \
+  --drop=EVA-02-L f_eva02l_s42,f_eva02l_s7,f_eva02l_s123,f_eva02l_s2026,f_eva02l_lpft_s42 \
+  f_dinov2l_s42,f_dinov2l_s7 f_dinov3l_s42,f_dinov3l_s7 f_dinov3l_n144_s42,f_dinov3l_n144_s7 f_dinov2l_n126_s42,f_dinov2l_n126_s7
+```
+Then put it on v52's other columns: `python make_submission.py --base submissions/sub_v52_t3_identity_ratio.csv
+--replace task4=task4/outputs/pred_v55_t4_r2fams.csv --out submissions/sub_v55_t4_r2fams.csv` (the blend script's own
+`sub_*.csv` now uses v52's columns, same result). `src/task4_final_nb.py` / `task4_final.ipynb` build v58 (checked 2026-11-22: identical `final_pred.csv`).
+
+**Previous final = v50 (LB 0.86406)**: the v47 recipe below with extra seeds inside four families: DINOv3-L + seed 7,
+EVA-02-B + 2 LP-FT runs (`--lp-epochs 2`), ConvNeXt-S + 1 HUD-dropout run (`--hud 0.5`), DINOv3-B + 1 HUD-dropout run.
+Same LB as v47 (0.86405); kept for the lower seed variance. Build: see `src/task4_final_nb.py` section 4.
 
 **Idea:** fine-tune strong pretrained backbones on all training images, then average their predicted probabilities
 across 8 "families". A family is one pretrained model, averaged over its seeds. The families differ mainly in their

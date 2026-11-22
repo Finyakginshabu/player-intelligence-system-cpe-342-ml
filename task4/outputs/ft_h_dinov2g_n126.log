@@ -1,0 +1,16 @@
+07:54:27 === h_dinov2g_n126: {'name': 'h_dinov2g_n126', 'backbone': 'vit_giant_patch14_reg4_dinov2.lvd142m', 'cv': 'hard', 'folds': '4', 'epochs': 12, 'batch': 64, 'lr': 3e-05, 'wd': 0.05, 'h': 126, 'w': 238, 'drop_path': 0.2, 'layer_decay': 0.9, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.7, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 0, 'lp_lr': 0.001, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'freeze_blocks': 28, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 11.471, 'save_weights': False}
+07:55:13 frozen: first 28 of 40 blocks; trainable 340M of 1135M parameters
+07:58:06 fold 4 ep 0: loss 0.8240  val macro F1 0.7681 (non-dark 0.8418)  171s  9.9 GB
+08:01:09 fold 4 ep 1: loss 0.4959  val macro F1 0.8713 (non-dark 0.9419)  167s  9.9 GB
+08:04:14 fold 4 ep 2: loss 0.4449  val macro F1 0.8467 (non-dark 0.9345)  167s  9.9 GB
+08:07:20 fold 4 ep 3: loss 0.4261  val macro F1 0.8511 (non-dark 0.9441)  168s  9.9 GB
+08:12:30 fold 4 ep 4: loss 0.4192  val macro F1 0.8530 (non-dark 0.9448)  167s  9.9 GB
+08:18:35 fold 4 ep 5: loss 0.4119  val macro F1 0.8560 (non-dark 0.9385)  167s  9.9 GB
+08:25:04 fold 4 ep 6: loss 0.4092  val macro F1 0.8632 (non-dark 0.9506)  167s  9.9 GB
+08:31:25 fold 4 ep 7: loss 0.4050  val macro F1 0.8761 (non-dark 0.9581)  167s  9.9 GB
+08:36:41 fold 4 ep 8: loss 0.4018  val macro F1 0.8668 (non-dark 0.9525)  167s  9.9 GB
+08:43:58 fold 4 ep 9: loss 0.4006  val macro F1 0.8720 (non-dark 0.9563)  167s  9.9 GB
+08:51:14 fold 4 ep 10: loss 0.4014  val macro F1 0.8670 (non-dark 0.9546)  167s  9.9 GB
+08:59:06 fold 4 ep 11: loss 0.4003  val macro F1 0.8691 (non-dark 0.9566)  167s  9.9 GB
+09:02:07 fold 4: held-out macro F1 with TTA 0.8653 | non-dark 0.9553  recall [0.619, 1.0, 0.962, 0.942, 1.0]
+09:02:07 === h_dinov2g_n126 [hard folds ['4']]: macro F1 mean 0.9553 +- 0.0000  [0.9553]

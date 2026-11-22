@@ -2,7 +2,9 @@
 
 Reads the TA's fixed csv format (`id`, `file_name`, `label`); rows stay in csv order, so test arrays are in ANS order.
 Images are cached once as uint8 arrays (N, 120, 230, 3) in `task4/outputs/img_{split}_u8.npy` (gitignored).
+On cloud notebooks T4_OUT_DIR / T4_CACHE_DIR move the outputs and the image cache out of the code folder.
 """
+import os
 import sys
 from pathlib import Path
 
@@ -15,7 +17,10 @@ sys.path.insert(0, str(ROOT))
 from common import paths  # noqa: E402
 
 DATA = paths.task_data(4)
-OUT = paths.outputs_dir(4)
+OUT = Path(os.environ["T4_OUT_DIR"]) if os.environ.get("T4_OUT_DIR") else paths.outputs_dir(4)
+CACHE = Path(os.environ.get("T4_CACHE_DIR") or OUT)
+OUT.mkdir(parents=True, exist_ok=True)
+CACHE.mkdir(parents=True, exist_ok=True)
 LABELS = ["7-11k", "fiveN", "freefried", "pube", "roblock"]  # index = submitted integer (datacard)
 H, W = 120, 230
 
@@ -28,7 +33,7 @@ def load_csv(split: str) -> pd.DataFrame:
 
 def images(split: str) -> np.ndarray:
     """uint8 (N, 120, 230, 3) in csv row order; built on first use."""
-    f = OUT / f"img_{split}_u8.npy"
+    f = CACHE / f"img_{split}_u8.npy"
     df = load_csv(split)
     if f.exists():
         a = np.load(f, mmap_mode="r")

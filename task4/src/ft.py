@@ -12,6 +12,8 @@ Outputs: outputs/oof_<name>.npy, outputs/test_<name>.npy, outputs/ft_<name>.json
 import argparse
 import json
 import math
+import os
+import sys
 import time
 
 import numpy as np
@@ -64,10 +66,23 @@ p.add_argument("--no-test", action="store_true")
 p.add_argument("--limit", type=int, default=0, help="smoke test: use this many train rows")
 p.add_argument("--seed", type=int, default=42)
 p.add_argument("--grad-ckpt", action="store_true")
+p.add_argument("--freeze-blocks", type=int, default=0,
+               help="ViTs: keep the patch embedding, tokens and the first N blocks frozen (fits ViT-g / H+ on 16 GB)")
 p.add_argument("--init", default="", help="encoder state dict loaded after creating the model (e.g. outputs/mim_<name>.pt)")
+p.add_argument("--la-tau", type=float, default=0.0,
+               help="logit-adjusted loss (Menon et al. 2021): train on logits + tau * log(training class shares); "
+                    "predictions use the plain logits. Use with --balance 0 (0 = off)")
+p.add_argument("--ckpt", action="store_true", help="keep a resumable checkpoint, rewritten after every epoch")
+p.add_argument("--max-hours", type=float, default=0.0,
+               help="with --ckpt: stop cleanly (exit code 75) when the next epoch would not fit in this budget (0 = off)")
+p.add_argument("--save-weights", action="store_true", help="save the final weights (fp16) as outputs/model_<name>_f<k>.pt")
 A = p.parse_args()
+if A.max_hours > 0 and not A.ckpt:
+    p.error("--max-hours needs --ckpt")
 
-DEV = "cuda"
+T0 = time.time()
+EXIT_PAUSED = 75
+DEV = "cuda" if torch.cuda.is_available() else "cpu"
 OUT = t4data.OUT
 LOG = OUT / f"ft_{A.name}.log"
 
@@ -111,6 +126,17 @@ def make_model():
         log(f"init from {A.init}: {len(miss)} missing keys (head expected), {len(unexp)} unexpected")
     if A.grad_ckpt and hasattr(m, "set_grad_checkpointing"):
         m.set_grad_checkpointing(True)
+    if A.freeze_blocks:
+        # Re-entrant checkpointing gives no gradients to blocks whose input does not require grad (CPU test 2026-11-22:
+        # 84 of 88 trainable tensors got none), so force the non-re-entrant version.
+        from timm.layers import set_reentrant_ckpt
+        set_reentrant_ckpt(False)
+        frozen = ("patch_embed", "cls_token", "reg_token", "pos_embed", "norm_pre", "mask_token")
+        for n, p_ in m.named_parameters():
+            p_.requires_grad_(int(n.split(".")[1]) >= A.freeze_blocks if n.startswith("blocks.") else not n.startswith(frozen))
+        n_tr = sum(p_.numel() for p_ in m.parameters() if p_.requires_grad)
+        log(f"frozen: first {A.freeze_blocks} of {len(m.blocks)} blocks; trainable {n_tr / 1e6:.0f}M of "
+            f"{sum(p_.numel() for p_ in m.parameters()) / 1e6:.0f}M parameters")
     return m.to(DEV).to(memory_format=torch.channels_last)
 
 
@@ -251,10 +277,11 @@ def predict(model, X, idx=None, zooms=(1.0, 1.08, 1.15)):
     return out.cpu().numpy()
 
 
-def linear_probe(model, tr, cw, ytr):
+def linear_probe(model, tr, cw, ytr, la=0.0):
     """LP stage of LP-FT: train only the classifier head on frozen features (backbone in eval mode, same augmentation and
     loss as fine-tuning), so full fine-tuning starts from a fitted head and distorts the pretrained features less."""
     head = list(model.get_classifier().parameters())
+    trainable = [p_.requires_grad for p_ in model.parameters()]  # --freeze-blocks: restore exactly this afterwards
     for p_ in model.parameters():
         p_.requires_grad_(False)
     for p_ in head:
@@ -271,7 +298,7 @@ def linear_probe(model, tr, cw, ytr):
             x = train_tf(Xtr[bi])
             y1h = F.one_hot(ytr[bi].to(DEV), 5).float() * (1 - A.smooth) + A.smooth / 5
             with torch.autocast(DEV):
-                logp = F.log_softmax(model(x).float(), 1)
+                logp = F.log_softmax(model(x).float() + la, 1)
             w = (y1h * cw).sum(1)
             loss = (-(y1h * logp).sum(1) * w).sum() / w.sum()
             opt.zero_grad(set_to_none=True)
@@ -280,8 +307,23 @@ def linear_probe(model, tr, cw, ytr):
             sched.step()
             tot += loss.item()
         log(f"LP ep {ep}: loss {tot / steps:.4f}  {time.time() - t0:.0f}s")
-    for p_ in model.parameters():
-        p_.requires_grad_(True)
+    for p_, t in zip(model.parameters(), trainable):
+        p_.requires_grad_(t)
+
+
+def ckpt_path(k):
+    return OUT / f"ckpt_{A.name}_f{k}.pt"
+
+
+def save_ckpt(k, ep, step, model, opt, sched, scaler, ema):
+    state = {"name": A.name, "backbone": A.backbone, "ep": ep, "step": step, "model": model.state_dict(),
+             "opt": opt.state_dict(), "sched": sched.state_dict(), "scaler": scaler.state_dict(),
+             "ema": None if ema is None else ema.module.state_dict(), "rng": torch.get_rng_state(),
+             "np_rng": np.random.get_state(),
+             "cuda_rng": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None}
+    tmp = ckpt_path(k).with_suffix(".tmp")
+    torch.save(state, tmp)
+    os.replace(tmp, ckpt_path(k))  # a session killed while saving keeps the previous checkpoint
 
 
 def train_fold(k, tr, va):
@@ -297,6 +339,9 @@ def train_fold(k, tr, va):
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=max_lrs, total_steps=total, pct_start=0.1, anneal_strategy="cos")
     counts = np.bincount(y_all[tr], minlength=5)
     cw = torch.tensor((counts.max() / counts) ** A.balance, dtype=torch.float32, device=DEV)
+    la = 0.0
+    if A.la_tau > 0:  # training class shares only; no test information
+        la = A.la_tau * torch.log(torch.tensor(counts / counts.sum(), dtype=torch.float32, device=DEV))
     scaler = torch.amp.GradScaler("cuda")
     ema = None
     if A.ema > 0:
@@ -314,10 +359,26 @@ def train_fold(k, tr, va):
             m = ycls == c
             w[m] *= m.sum() / w[m].sum()
         scene_p = w / w.sum()
-    if A.lp_epochs > 0:
-        linear_probe(model, tr, cw, ytr)
-    step = 0
-    for ep in range(A.epochs):
+    use_ckpt = A.ckpt and not A.limit
+    start_ep, step = 0, 0
+    if use_ckpt and ckpt_path(k).exists():
+        ck = torch.load(ckpt_path(k), map_location="cpu", weights_only=False)
+        assert (ck["name"], ck["backbone"]) == (A.name, A.backbone), "checkpoint belongs to another run"
+        model.load_state_dict(ck["model"])
+        opt.load_state_dict(ck["opt"])
+        sched.load_state_dict(ck["sched"])
+        scaler.load_state_dict(ck["scaler"])
+        if ema is not None:
+            ema.module.load_state_dict(ck["ema"])
+        start_ep, step = ck["ep"] + 1, ck["step"]
+        torch.set_rng_state(ck["rng"])
+        np.random.set_state(ck["np_rng"])
+        if ck["cuda_rng"] is not None and torch.cuda.is_available():
+            torch.cuda.set_rng_state_all(ck["cuda_rng"])
+        log(f"fold {k}: resumed from the checkpoint after epoch {ck['ep']}")
+    elif A.lp_epochs > 0:
+        linear_probe(model, tr, cw, ytr, la)
+    for ep in range(start_ep, A.epochs):
         model.train()
         t0, tot = time.time(), 0.0
         if A.scene_balance > 0:  # rare train scenes drawn more often (with replacement), class shares unchanged
@@ -332,7 +393,7 @@ def train_fold(k, tr, va):
             if A.mix > 0 and np.random.rand() < A.mix:
                 x, y1h = mix_batch(x, y1h)
             with torch.autocast(DEV):
-                logp = F.log_softmax(model(x).float(), 1)
+                logp = F.log_softmax(model(x).float() + la, 1)
             w = (y1h * cw).sum(1)
             loss = (-(y1h * logp).sum(1) * w).sum() / w.sum()
             opt.zero_grad(set_to_none=True)
@@ -354,6 +415,13 @@ def train_fold(k, tr, va):
             pe = predict(ema.module, Xtr, va, zooms=(1.0,))
             msg += f"  (EMA {f1_score(y_all[va], pe.argmax(1), average='macro'):.4f})"
         log(msg + f"  {time.time() - t0:.0f}s  {torch.cuda.max_memory_allocated() / 2 ** 30:.1f} GB")
+        if use_ckpt:
+            save_ckpt(k, ep, step, model, opt, sched, scaler, ema)
+        if A.max_hours > 0 and ep < A.epochs - 1:
+            used, per_epoch = (time.time() - T0) / 3600, (time.time() - t0) / 3600
+            if used + 1.3 * per_epoch > A.max_hours:
+                log(f"fold {k}: paused after epoch {ep} ({used:.2f} h used of {A.max_hours:.2f} h); rerun to resume")
+                sys.exit(EXIT_PAUSED)
     return ema.module if ema is not None else model
 
 
@@ -363,7 +431,7 @@ done = json.loads(f_done.read_text()) if f_done.exists() and not A.limit else {}
 oof = np.load(f_oof) if f_oof.exists() and done else np.zeros((len(y_all), 5), dtype=np.float32)
 Xte = None if A.no_test or A.limit else torch.from_numpy(np.ascontiguousarray(t4data.images("test")))
 test_sum = np.load(f_test) * len(done) if f_test.exists() and done else (None if Xte is None else np.zeros((len(Xte), 5), dtype=np.float32))
-for k in [int(v) for v in A.folds.split(",")]:
+for k in ([0] if A.cv == "full" else [int(v) for v in A.folds.split(",")]):  # --cv full has a single "fold"
     if str(k) in done:
         log(f"fold {k}: already done ({done[str(k)]:.4f})")
         continue
@@ -385,6 +453,10 @@ for k in [int(v) for v in A.folds.split(",")]:
     if Xte is not None:
         np.save(f_test, test_sum / len(done))
     f_done.write_text(json.dumps(done))
+    if A.save_weights:
+        weights = {n: v.half() if v.is_floating_point() else v for n, v in model.state_dict().items()}
+        torch.save(weights, OUT / f"model_{A.name}_f{k}.pt")
+    ckpt_path(k).unlink(missing_ok=True)
     del model
     torch.cuda.empty_cache()
 if done:

@@ -1,0 +1,16 @@
+11:21:42 === h3_dinov3hp_n144: {'name': 'h3_dinov3hp_n144', 'backbone': 'vit_huge_plus_patch16_dinov3.lvd1689m', 'cv': 'hard', 'folds': '3', 'epochs': 12, 'batch': 64, 'lr': 6e-05, 'wd': 0.05, 'h': 144, 'w': 272, 'drop_path': 0.2, 'layer_decay': 0.9, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.7, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 0, 'lp_lr': 0.001, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'freeze_blocks': 20, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 7.469, 'save_weights': False}
+11:22:41 frozen: first 20 of 32 blocks; trainable 315M of 841M parameters
+11:43:05 fold 3 ep 0: loss 1.2787  val macro F1 0.8614 (non-dark 0.8618)  1223s  8.6 GB
+12:03:21 fold 3 ep 1: loss 0.6264  val macro F1 0.9326 (non-dark 0.9334)  1209s  8.6 GB
+12:23:34 fold 3 ep 2: loss 0.5269  val macro F1 0.9514 (non-dark 0.9519)  1206s  8.6 GB
+12:43:46 fold 3 ep 3: loss 0.4985  val macro F1 0.9662 (non-dark 0.9668)  1205s  8.6 GB
+13:03:56 fold 3 ep 4: loss 0.4774  val macro F1 0.9702 (non-dark 0.9708)  1203s  8.6 GB
+13:24:08 fold 3 ep 5: loss 0.4669  val macro F1 0.9730 (non-dark 0.9734)  1206s  8.6 GB
+13:44:19 fold 3 ep 6: loss 0.4550  val macro F1 0.9709 (non-dark 0.9713)  1205s  8.6 GB
+14:04:31 fold 3 ep 7: loss 0.4550  val macro F1 0.9781 (non-dark 0.9785)  1204s  8.6 GB
+14:24:40 fold 3 ep 8: loss 0.4485  val macro F1 0.9763 (non-dark 0.9766)  1204s  8.6 GB
+14:44:51 fold 3 ep 9: loss 0.4465  val macro F1 0.9772 (non-dark 0.9775)  1204s  8.6 GB
+15:05:04 fold 3 ep 10: loss 0.4437  val macro F1 0.9754 (non-dark 0.9757)  1206s  8.6 GB
+15:25:24 fold 3 ep 11: loss 0.4447  val macro F1 0.9765 (non-dark 0.9769)  1207s  8.6 GB
+15:29:54 fold 3: held-out macro F1 with TTA 0.9779 | non-dark 0.9783  recall [0.999, 0.954, 0.985, 0.994, 0.936]
+15:29:54 === h3_dinov3hp_n144 [hard folds ['3']]: macro F1 mean 0.9783 +- 0.0000  [0.9783]

@@ -1,0 +1,9 @@
+13:50:28 === h3_dinov3b_lr2e4: {'name': 'h3_dinov3b_lr2e4', 'backbone': 'vit_base_patch16_dinov3.lvd1689m', 'cv': 'hard', 'folds': '3', 'epochs': 6, 'batch': 32, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.1, 'layer_decay': 0.75, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 0, 'lp_lr': 0.001, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 5.313, 'save_weights': False}
+14:07:12 fold 3 ep 0: loss 0.9246  val macro F1 0.8708 (non-dark 0.8713)  1002s  2.2 GB
+14:23:38 fold 3 ep 1: loss 0.5220  val macro F1 0.9297 (non-dark 0.9298)  986s  2.2 GB
+14:39:57 fold 3 ep 2: loss 0.4681  val macro F1 0.9375 (non-dark 0.9378)  977s  2.2 GB
+14:56:07 fold 3 ep 3: loss 0.4389  val macro F1 0.9607 (non-dark 0.9610)  969s  2.2 GB
+15:12:12 fold 3 ep 4: loss 0.4270  val macro F1 0.9610 (non-dark 0.9613)  964s  2.2 GB
+15:28:19 fold 3 ep 5: loss 0.4182  val macro F1 0.9569 (non-dark 0.9572)  965s  2.2 GB
+15:30:25 fold 3: held-out macro F1 with TTA 0.9574 | non-dark 0.9577  recall [0.989, 0.919, 0.981, 0.995, 0.872]
+15:30:25 === h3_dinov3b_lr2e4 [hard folds ['3']]: macro F1 mean 0.9577 +- 0.0000  [0.9577]

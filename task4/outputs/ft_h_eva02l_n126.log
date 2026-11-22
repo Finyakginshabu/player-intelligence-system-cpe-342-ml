@@ -1,0 +1,20 @@
+17:05:15 === h_eva02l_n126: {'name': 'h_eva02l_n126', 'backbone': 'eva02_large_patch14_448.mim_in22k_ft_in22k_in1k', 'cv': 'hard', 'folds': '4', 'epochs': 15, 'batch': 64, 'lr': 5e-05, 'wd': 0.05, 'h': 126, 'w': 238, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.7, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 2, 'lp_lr': 0.001, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 11.465, 'save_weights': False}
+17:06:24 LP ep 0: loss 1.1578  48s
+17:07:07 LP ep 1: loss 1.0314  44s
+17:10:05 fold 4 ep 0: loss 1.0303  val macro F1 0.6880 (non-dark 0.7564)  177s  6.5 GB
+17:13:09 fold 4 ep 1: loss 0.6403  val macro F1 0.8324 (non-dark 0.9186)  177s  6.5 GB
+17:16:14 fold 4 ep 2: loss 0.4998  val macro F1 0.8003 (non-dark 0.8897)  177s  6.5 GB
+17:19:19 fold 4 ep 3: loss 0.4566  val macro F1 0.8371 (non-dark 0.9304)  177s  6.5 GB
+17:22:30 fold 4 ep 4: loss 0.4391  val macro F1 0.8437 (non-dark 0.9385)  177s  6.5 GB
+17:25:42 fold 4 ep 5: loss 0.4273  val macro F1 0.8660 (non-dark 0.9543)  177s  6.5 GB
+17:28:47 fold 4 ep 6: loss 0.4169  val macro F1 0.8580 (non-dark 0.9508)  177s  6.5 GB
+17:31:52 fold 4 ep 7: loss 0.4124  val macro F1 0.8589 (non-dark 0.9471)  177s  6.5 GB
+17:34:57 fold 4 ep 8: loss 0.4085  val macro F1 0.8664 (non-dark 0.9553)  177s  6.5 GB
+17:38:09 fold 4 ep 9: loss 0.4048  val macro F1 0.8628 (non-dark 0.9527)  178s  6.5 GB
+17:41:14 fold 4 ep 10: loss 0.4017  val macro F1 0.8649 (non-dark 0.9571)  177s  6.5 GB
+17:44:19 fold 4 ep 11: loss 0.4005  val macro F1 0.8690 (non-dark 0.9588)  177s  6.5 GB
+17:47:24 fold 4 ep 12: loss 0.4003  val macro F1 0.8684 (non-dark 0.9592)  177s  6.5 GB
+17:50:30 fold 4 ep 13: loss 0.3980  val macro F1 0.8670 (non-dark 0.9590)  177s  6.5 GB
+17:53:42 fold 4 ep 14: loss 0.3995  val macro F1 0.8661 (non-dark 0.9579)  177s  6.5 GB
+17:54:09 fold 4: held-out macro F1 with TTA 0.8609 | non-dark 0.9540  recall [0.595, 1.0, 0.965, 0.961, 1.0]
+17:54:09 === h_eva02l_n126 [hard folds ['4']]: macro F1 mean 0.9540 +- 0.0000  [0.954]

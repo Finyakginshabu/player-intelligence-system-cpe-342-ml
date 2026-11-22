@@ -1,0 +1,16 @@
+11:21:42 === h3_dinov2g_n126: {'name': 'h3_dinov2g_n126', 'backbone': 'vit_giant_patch14_reg4_dinov2.lvd142m', 'cv': 'hard', 'folds': '3', 'epochs': 12, 'batch': 64, 'lr': 3e-05, 'wd': 0.05, 'h': 126, 'w': 238, 'drop_path': 0.2, 'layer_decay': 0.9, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.7, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 0, 'lp_lr': 0.001, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'freeze_blocks': 28, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 7.469, 'save_weights': False}
+11:22:41 frozen: first 28 of 40 blocks; trainable 340M of 1135M parameters
+11:45:00 fold 3 ep 0: loss 0.8313  val macro F1 0.9074 (non-dark 0.9086)  1338s  9.9 GB
+12:07:19 fold 3 ep 1: loss 0.5010  val macro F1 0.9528 (non-dark 0.9543)  1327s  9.9 GB
+12:29:34 fold 3 ep 2: loss 0.4493  val macro F1 0.9601 (non-dark 0.9610)  1322s  9.9 GB
+12:51:46 fold 3 ep 3: loss 0.4301  val macro F1 0.9705 (non-dark 0.9719)  1319s  9.9 GB
+13:13:57 fold 3 ep 4: loss 0.4232  val macro F1 0.9682 (non-dark 0.9691)  1319s  9.9 GB
+13:36:08 fold 3 ep 5: loss 0.4144  val macro F1 0.9716 (non-dark 0.9726)  1319s  9.9 GB
+13:58:17 fold 3 ep 6: loss 0.4111  val macro F1 0.9779 (non-dark 0.9785)  1316s  9.9 GB
+14:20:27 fold 3 ep 7: loss 0.4078  val macro F1 0.9725 (non-dark 0.9734)  1317s  9.9 GB
+14:42:32 fold 3 ep 8: loss 0.4062  val macro F1 0.9757 (non-dark 0.9765)  1314s  9.9 GB
+15:04:39 fold 3 ep 9: loss 0.4036  val macro F1 0.9776 (non-dark 0.9784)  1317s  9.9 GB
+15:26:54 fold 3 ep 10: loss 0.4013  val macro F1 0.9781 (non-dark 0.9789)  1322s  9.9 GB
+15:49:33 fold 3 ep 11: loss 0.4009  val macro F1 0.9792 (non-dark 0.9798)  1347s  9.9 GB
+15:55:03 fold 3: held-out macro F1 with TTA 0.9782 | non-dark 0.9785  recall [1.0, 0.958, 0.985, 0.996, 0.931]
+15:55:03 === h3_dinov2g_n126 [hard folds ['3']]: macro F1 mean 0.9785 +- 0.0000  [0.9785]

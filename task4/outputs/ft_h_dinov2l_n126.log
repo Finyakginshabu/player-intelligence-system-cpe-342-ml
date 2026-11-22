@@ -1,0 +1,18 @@
+06:49:45 === h_dinov2l_n126: {'name': 'h_dinov2l_n126', 'backbone': 'vit_large_patch14_reg4_dinov2.lvd142m', 'cv': 'hard', 'folds': '4', 'epochs': 15, 'batch': 64, 'lr': 3e-05, 'wd': 0.05, 'h': 126, 'w': 238, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.7, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 0, 'lp_lr': 0.001, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 7.474, 'save_weights': False}
+07:05:36 fold 4 ep 0: loss 1.4324  val macro F1 0.7275 (non-dark 0.7311)  928s  6.3 GB
+07:21:04 fold 4 ep 1: loss 0.7546  val macro F1 0.8628 (non-dark 0.9241)  924s  6.3 GB
+07:36:32 fold 4 ep 2: loss 0.5686  val macro F1 0.8725 (non-dark 0.9395)  924s  6.3 GB
+07:51:56 fold 4 ep 3: loss 0.5164  val macro F1 0.8706 (non-dark 0.9520)  921s  6.3 GB
+08:07:21 fold 4 ep 4: loss 0.4889  val macro F1 0.8584 (non-dark 0.9446)  921s  6.3 GB
+08:22:44 fold 4 ep 5: loss 0.4666  val macro F1 0.8670 (non-dark 0.9568)  919s  6.3 GB
+08:38:10 fold 4 ep 6: loss 0.4560  val macro F1 0.8620 (non-dark 0.9548)  921s  6.3 GB
+08:53:33 fold 4 ep 7: loss 0.4481  val macro F1 0.8697 (non-dark 0.9608)  920s  6.3 GB
+09:08:56 fold 4 ep 8: loss 0.4388  val macro F1 0.8670 (non-dark 0.9570)  919s  6.3 GB
+09:24:17 fold 4 ep 9: loss 0.4359  val macro F1 0.8634 (non-dark 0.9548)  918s  6.3 GB
+09:39:38 fold 4 ep 10: loss 0.4328  val macro F1 0.8666 (non-dark 0.9569)  917s  6.3 GB
+09:54:57 fold 4 ep 11: loss 0.4287  val macro F1 0.8708 (non-dark 0.9620)  916s  6.3 GB
+10:10:15 fold 4 ep 12: loss 0.4278  val macro F1 0.8707 (non-dark 0.9613)  914s  6.3 GB
+10:25:34 fold 4 ep 13: loss 0.4245  val macro F1 0.8727 (non-dark 0.9621)  915s  6.3 GB
+10:40:53 fold 4 ep 14: loss 0.4259  val macro F1 0.8726 (non-dark 0.9620)  916s  6.3 GB
+10:42:31 fold 4: held-out macro F1 with TTA 0.8680 | non-dark 0.9600  recall [0.612, 1.0, 0.985, 0.95, 1.0]
+10:42:31 === h_dinov2l_n126 [hard folds ['4']]: macro F1 mean 0.9600 +- 0.0000  [0.96]

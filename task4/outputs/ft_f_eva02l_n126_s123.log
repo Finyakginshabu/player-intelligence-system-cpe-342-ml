@@ -1,0 +1,19 @@
+05:48:04 === f_eva02l_n126_s123: {'name': 'f_eva02l_n126_s123', 'backbone': 'eva02_large_patch14_448.mim_in22k_ft_in22k_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 15, 'batch': 64, 'lr': 5e-05, 'wd': 0.05, 'h': 126, 'w': 238, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.7, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 2, 'lp_lr': 0.001, 'no_test': False, 'limit': 0, 'seed': 123, 'grad_ckpt': True, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 7.468, 'save_weights': True}
+05:53:56 LP ep 0: loss 1.1560  326s
+05:59:15 LP ep 1: loss 1.0413  319s
+06:20:04 fold 0 ep 0: loss 1.0173  1248s  6.5 GB
+06:40:53 fold 0 ep 1: loss 0.6190  1246s  6.5 GB
+07:01:40 fold 0 ep 2: loss 0.4944  1243s  6.5 GB
+07:22:24 fold 0 ep 3: loss 0.4533  1241s  6.5 GB
+07:43:08 fold 0 ep 4: loss 0.4384  1240s  6.5 GB
+08:03:51 fold 0 ep 5: loss 0.4259  1239s  6.5 GB
+08:24:33 fold 0 ep 6: loss 0.4215  1238s  6.5 GB
+08:45:14 fold 0 ep 7: loss 0.4118  1238s  6.5 GB
+09:05:55 fold 0 ep 8: loss 0.4101  1237s  6.5 GB
+09:26:37 fold 0 ep 9: loss 0.4068  1238s  6.5 GB
+09:47:17 fold 0 ep 10: loss 0.4047  1237s  6.5 GB
+10:07:57 fold 0 ep 11: loss 0.4028  1236s  6.5 GB
+10:28:37 fold 0 ep 12: loss 0.4014  1237s  6.5 GB
+10:49:20 fold 0 ep 13: loss 0.3994  1238s  6.5 GB
+11:10:02 fold 0 ep 14: loss 0.3995  1238s  6.5 GB
+11:23:07 === f_eva02l_n126_s123 [full folds ['0']]: macro F1 mean 0.0000 +- 0.0000  [0.0]

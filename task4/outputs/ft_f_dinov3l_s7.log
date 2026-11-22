@@ -1,0 +1,8 @@
+01:50:40 === f_dinov3l_s7: {'name': 'f_dinov3l_s7', 'backbone': 'vit_large_patch16_dinov3.lvd1689m', 'cv': 'full', 'folds': '0', 'epochs': 6, 'batch': 16, 'lr': 0.0001, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 0, 'lp_lr': 0.001, 'no_test': False, 'limit': 0, 'seed': 7, 'grad_ckpt': True, 'init': ''}
+06:44:36 fold 0 ep 0: loss 0.9407  17632s  5.9 GB
+11:38:49 fold 0 ep 1: loss 0.4931  17653s  5.9 GB
+16:32:03 fold 0 ep 2: loss 0.4547  17594s  5.9 GB
+21:22:08 fold 0 ep 3: loss 0.4310  17404s  5.9 GB
+02:12:19 fold 0 ep 4: loss 0.4206  17411s  5.9 GB
+07:02:19 fold 0 ep 5: loss 0.4162  17400s  5.9 GB
+07:29:28 === f_dinov3l_s7 [full folds ['0']]: macro F1 mean 0.0000 +- 0.0000  [0.0]

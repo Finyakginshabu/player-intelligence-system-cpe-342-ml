@@ -1,0 +1,17 @@
+16:47:13 === f_dinov2l_n126_s7: {'name': 'f_dinov2l_n126_s7', 'backbone': 'vit_large_patch14_reg4_dinov2.lvd142m', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 15, 'batch': 64, 'lr': 3e-05, 'wd': 0.05, 'h': 126, 'w': 238, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.7, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 0, 'lp_lr': 0.001, 'no_test': False, 'limit': 0, 'seed': 7, 'grad_ckpt': True, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 7.473, 'save_weights': True}
+17:01:48 fold 0 ep 0: loss 1.4344  858s  6.3 GB
+17:16:14 fold 0 ep 1: loss 0.7454  863s  6.3 GB
+17:30:40 fold 0 ep 2: loss 0.5654  862s  6.3 GB
+17:45:05 fold 0 ep 3: loss 0.5141  861s  6.3 GB
+17:59:29 fold 0 ep 4: loss 0.4866  860s  6.3 GB
+18:13:53 fold 0 ep 5: loss 0.4706  861s  6.3 GB
+18:28:16 fold 0 ep 6: loss 0.4578  860s  6.3 GB
+18:42:38 fold 0 ep 7: loss 0.4510  858s  6.3 GB
+18:56:57 fold 0 ep 8: loss 0.4428  856s  6.3 GB
+19:11:14 fold 0 ep 9: loss 0.4382  853s  6.3 GB
+19:25:30 fold 0 ep 10: loss 0.4347  852s  6.3 GB
+19:39:46 fold 0 ep 11: loss 0.4283  852s  6.3 GB
+19:54:02 fold 0 ep 12: loss 0.4277  852s  6.3 GB
+20:08:20 fold 0 ep 13: loss 0.4285  855s  6.3 GB
+20:22:37 fold 0 ep 14: loss 0.4277  854s  6.3 GB
+20:30:55 === f_dinov2l_n126_s7 [full folds ['0']]: macro F1 mean 0.0000 +- 0.0000  [0.0]

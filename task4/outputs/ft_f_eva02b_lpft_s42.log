@@ -1,0 +1,10 @@
+02:11:15 === f_eva02b_lpft_s42: {'name': 'f_eva02b_lpft_s42', 'backbone': 'eva02_base_patch14_448.mim_in22k_ft_in22k_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 32, 'lr': 5e-05, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.1, 'layer_decay': 0.75, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 2, 'lp_lr': 0.001, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 7.472, 'save_weights': True}
+02:18:13 LP ep 0: loss 0.8427  408s
+02:24:54 LP ep 1: loss 0.7517  401s
+02:50:47 fold 0 ep 0: loss 0.6374  1553s  2.6 GB
+03:16:32 fold 0 ep 1: loss 0.4674  1544s  2.6 GB
+03:42:15 fold 0 ep 2: loss 0.4307  1543s  2.6 GB
+04:07:51 fold 0 ep 3: loss 0.4143  1534s  2.6 GB
+04:33:26 fold 0 ep 4: loss 0.4069  1534s  2.6 GB
+04:58:52 fold 0 ep 5: loss 0.4052  1525s  2.6 GB
+05:14:59 === f_eva02b_lpft_s42 [full folds ['0']]: macro F1 mean 0.0000 +- 0.0000  [0.0]

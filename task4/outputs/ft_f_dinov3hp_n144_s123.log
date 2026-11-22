@@ -1,0 +1,15 @@
+14:14:33 === f_dinov3hp_n144_s123: {'name': 'f_dinov3hp_n144_s123', 'backbone': 'vit_huge_plus_patch16_dinov3.lvd1689m', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 12, 'batch': 64, 'lr': 6e-05, 'wd': 0.05, 'h': 144, 'w': 272, 'drop_path': 0.2, 'layer_decay': 0.9, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.7, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 0, 'lp_lr': 0.001, 'no_test': False, 'limit': 0, 'seed': 123, 'grad_ckpt': True, 'freeze_blocks': 20, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 10.169, 'save_weights': True}
+14:15:06 frozen: first 20 of 32 blocks; trainable 315M of 841M parameters
+14:18:11 fold 0 ep 0: loss 1.2586  184s  8.5 GB
+14:21:26 fold 0 ep 1: loss 0.6189  183s  8.5 GB
+14:24:44 fold 0 ep 2: loss 0.5238  183s  8.5 GB
+14:28:11 fold 0 ep 3: loss 0.4951  183s  8.5 GB
+14:32:33 fold 0 ep 4: loss 0.4788  183s  8.5 GB
+14:38:30 fold 0 ep 5: loss 0.4672  183s  8.5 GB
+14:44:03 fold 0 ep 6: loss 0.4586  183s  8.5 GB
+14:49:54 fold 0 ep 7: loss 0.4534  183s  8.5 GB
+14:53:52 fold 0 ep 8: loss 0.4488  183s  8.5 GB
+14:57:54 fold 0 ep 9: loss 0.4458  183s  8.5 GB
+15:04:09 fold 0 ep 10: loss 0.4442  183s  8.5 GB
+15:09:45 fold 0 ep 11: loss 0.4429  183s  8.5 GB
+15:15:45 === f_dinov3hp_n144_s123 [full folds ['0']]: macro F1 mean 0.0000 +- 0.0000  [0.0]

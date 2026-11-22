@@ -1,0 +1,21 @@
+19:24:36 === h_dinov3l_n144: {'name': 'h_dinov3l_n144', 'backbone': 'vit_large_patch16_dinov3.lvd1689m', 'cv': 'hard', 'folds': '4', 'epochs': 18, 'batch': 64, 'lr': 8e-05, 'wd': 0.05, 'h': 144, 'w': 272, 'drop_path': 0.2, 'layer_decay': 0.9, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.7, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 0, 'lp_lr': 0.001, 'no_test': True, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 7.471, 'save_weights': False}
+19:40:43 fold 4 ep 0: loss 1.4161  val macro F1 0.8038 (non-dark 0.8014)  953s  6.4 GB
+19:56:38 fold 4 ep 1: loss 0.6731  val macro F1 0.8449 (non-dark 0.9281)  952s  6.4 GB
+20:12:30 fold 4 ep 2: loss 0.5127  val macro F1 0.8577 (non-dark 0.9478)  948s  6.4 GB
+20:28:20 fold 4 ep 3: loss 0.4737  val macro F1 0.8535 (non-dark 0.9441)  946s  6.4 GB
+20:44:09 fold 4 ep 4: loss 0.4537  val macro F1 0.8623 (non-dark 0.9520)  945s  6.4 GB
+20:59:59 fold 4 ep 5: loss 0.4438  val macro F1 0.8548 (non-dark 0.9451)  947s  6.4 GB
+21:15:44 fold 4 ep 6: loss 0.4332  val macro F1 0.8630 (non-dark 0.9527)  942s  6.4 GB
+21:31:29 fold 4 ep 7: loss 0.4280  val macro F1 0.8628 (non-dark 0.9495)  941s  6.4 GB
+21:47:13 fold 4 ep 8: loss 0.4215  val macro F1 0.8597 (non-dark 0.9537)  941s  6.4 GB
+22:02:57 fold 4 ep 9: loss 0.4167  val macro F1 0.8643 (non-dark 0.9580)  940s  6.4 GB
+22:18:41 fold 4 ep 10: loss 0.4113  val macro F1 0.8716 (non-dark 0.9603)  941s  6.4 GB
+22:34:27 fold 4 ep 11: loss 0.4104  val macro F1 0.8727 (non-dark 0.9612)  943s  6.4 GB
+22:50:14 fold 4 ep 12: loss 0.4091  val macro F1 0.8767 (non-dark 0.9658)  943s  6.4 GB
+23:05:58 fold 4 ep 13: loss 0.4063  val macro F1 0.8730 (non-dark 0.9617)  941s  6.4 GB
+23:21:40 fold 4 ep 14: loss 0.4058  val macro F1 0.8698 (non-dark 0.9611)  939s  6.4 GB
+23:37:22 fold 4 ep 15: loss 0.4060  val macro F1 0.8717 (non-dark 0.9627)  938s  6.4 GB
+23:53:03 fold 4 ep 16: loss 0.4048  val macro F1 0.8704 (non-dark 0.9613)  938s  6.4 GB
+00:08:44 fold 4 ep 17: loss 0.4045  val macro F1 0.8708 (non-dark 0.9618)  937s  6.4 GB
+00:10:29 fold 4: held-out macro F1 with TTA 0.8680 | non-dark 0.9609  recall [0.609, 1.0, 0.976, 0.958, 1.0]
+00:10:29 === h_dinov3l_n144 [hard folds ['4']]: macro F1 mean 0.9609 +- 0.0000  [0.9609]

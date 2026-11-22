@@ -381,3 +381,123 @@ each as an extra family; optional held-out `h_small_hud` (hard fold 4, compare h
 - **LB v46 prior150 (p/π^1.5) = 0.86334**, Δ +0.00109 vs v45 (292 rows) = new best. Curve A 0 / 0.5 / 1.0 / 1.5 = 0.85865 / 0.86071 / 0.86225 / 0.86334 (steps +0.00206, +0.00154, +0.00109). Held-out fold 4 fell with A, so the gain comes from the test's class mix.
 - **LB v47 prior200 (p/π^2.0) = 0.86405**, Δ +0.00071 vs v46 (256 rows) = new best. Sweep stopped: steps +0.00206 / +0.00154 / +0.00109 / +0.00071, and A = 3.0 breaks the rule (no 7-11k predictions, 3,907 rows move).
 - **v47 = final** (2026-11-17): `final_pred.csv` and `submission.csv` = v47 (`blend_v41plus.py --final --prior=2.0 ...`); RECIPE.md updated.
+
+### R24 (2026-11-18): logit-adjusted training and LP-FT on the team's Kaggle accounts (`src/build_cloud_kit.py`)
+Why: the prior rule (v44-v47, +0.0054 LB) moved 1,242 test rows, mostly into roblock and fiveN, while stronger class weights
+barely change the test predictions (`f_small_bal1`: roblock 16.3 % vs 16.2 % for ConvNeXt-S × 4). Logit adjustment puts the
+training class shares into the loss instead: `CE(logits + tau * log pi, y)`, plain logits at prediction, `--balance 0`.
+New `ft.py` options: `--la-tau`, `--ckpt` (resume after every epoch), `--max-hours` (clean pause, exit 75), `--save-weights`;
+`--cv full` now runs only its single fold (no IndexError after saving). `t4data.py`: `T4_OUT_DIR`, `T4_CACHE_DIR`.
+CPU test on synthetic data: pause + resume gives test probabilities identical to an uninterrupted run. No real run yet.
+Plan: account 1 = stage 1 (ConvNeXt-S and DINOv3-B, hard folds 3 and 4; new DINOv3-B baselines at lr 2e-4 because `h_dinov3B`
+used lr 5e-5); account 5 = LP-FT EVA-02-B × 2 and EVA-02-L; accounts 2-4 = logit-adjusted families, only after stage 1 passes.
+Pass rule: match the prior rule's gain on fold 3 and clearly reduce its loss on fold 4 (A = 2.0: -0.046); single-seed noise ±0.006.
+- **R24 stage 1 result (2026-11-19, account 1, 6 runs, hard folds 3 / 4 non-dark, single seed, baseline = same recipe with
+  `--balance 0.5` and the post-hoc rule argmax p / pi^A):** logit adjustment (`--la-tau 1 --balance 0`) did NOT beat the post-hoc
+  rule. Fold 3 / fold 4 macro F1: ConvNeXt-S base A=0 0.9622 / 0.9492, A=1 0.9686 / 0.9374, A=2 0.9705 / 0.9218, LA 0.9653 / 0.9269;
+  DINOv3-B base A=0 0.9577 / 0.9496, A=1 0.9636 / 0.9371, A=2 0.9660 / 0.9264, LA 0.9599 / 0.9427; S+D3B mean base A=2
+  0.9743 / 0.9173, LA 0.9699 / 0.9429. LA behaves like a prior shift (gain on fold 3, loss on fold 4), no new information
+  beyond A. Decision: accounts 2-4 (logit-adjusted retraining) NOT started. Fold 4 again says A > 0.5 costs 0.01-0.05.
+- **2026-11-19, 4050 laptop runs:** `f_dinov3l_s7` loss 0.4162 (s42 0.4136, test agreement 0.945); `h_small_hud` (ConvNeXt-S, HUD
+  dropout 0.5, hard fold 4 non-dark) **0.9407** vs plain 0.9492 (s42) / 0.9435 (s7) → HUD dropout does not help; `f_small_hud_s42`
+  loss 0.4097, behaves like a seed (agreement with plain s42 0.884 vs 0.888 between plain seeds).
+  Account 5: LP-FT EVA-02-B s42 / s7 final loss 0.4052 / 0.4052 (plain 0.406-0.409), seed agreement 0.948 (plain pairs
+  0.932-0.935); LP-FT EVA-02-L paused after one session, not resumed.
+- **LB v50 (all new runs as extra seeds inside their families, A = 2.0, 127 rows vs v47) = 0.86406**, Δ +0.00001 → flat;
+  adopted as `final_pred.csv` / `submission.csv` (lower variance, same LB). Finals: v50 + v45.
+- **LB v51 (v50 with large ViTs x2, CNNs x0.5, 291 rows) = 0.86406, Δ 0.00000** → family weights do not matter for the current
+  families (as v38 found for the ViT share). v50 stays final; no more weight tests. Reweighting is only worth revisiting for a new
+  family that is clearly stronger on held-out folds.
+
+### R25 (2026-11-21): round 2 on the team's Kaggle accounts, near-native resolution ViT-L + HUD dropout 0.7
+Recipes (`build_cloud_kit.py` D3L_N / D2L_N): DINOv3-L at 144×272, 18 epochs, batch 64, lr 8e-5, ld 0.90; DINOv2-L reg4 at
+126×238, 15 epochs, batch 64, lr 3e-5, ld 0.85; both drop-path 0.2, HUD dropout 0.7. Results copied from `cloud_kit_t4/run2`.
+- Held-out, non-dark macro F1 (single seed, noise ≈ ±0.006): fold 4 `h_dinov3l_n144` **0.9609**, `h_dinov2l_n126` **0.9600**,
+  old-recipe `h_dinov3l` (224×448, 6 ep) 0.9563; best earlier singles 0.9492-0.9541. Fold 3 `h3_dinov3l_n144` **0.9811**
+  (ConvNeXt-S 0.9622, DINOv3-B 0.9577; S+V2-B+D3B blend 0.9689).
+- Blends on held-out (equal families; A = 0 / 1 / 2): fold 4 base S+V2-B+EVA-B+D3B 0.9559 / 0.9458 / 0.9165;
+  + D3L-new + D2L-new 0.9610 / 0.9485 / 0.9220; + old D3L as well 0.9626 / 0.9489 / 0.9213; large ViTs alone 0.9623 / 0.9505 / 0.9358.
+  Fold 3: base S+V2-B+D3B 0.9689 / 0.9733 / 0.9771, + D3L-new 0.9752 / 0.9796 / 0.9814, D3L-new alone 0.9811 / 0.9847 / 0.9848.
+- Full-data runs: `f_dinov3l_n144_s42/s7` final loss 0.4050 / 0.4047, `f_dinov2l_n126_s42/s7` 0.4254 / 0.4277,
+  `f_eva02l_lpft_s42` 0.3988 (resumed once). Test agreement: new vs old recipe ≈ 0.93 (like two different backbones), new-recipe
+  seed pairs 0.954 (D3L) / 0.962 (D2L) vs old 0.945 / 0.939.
+- Account 5 re-ran the two EVA-02-B LP-FT jobs (99.3 % / 99.6 % argmax agreement with the run-1 files); the run-1 files stay in use.
+- Built (prior A = 2.0, on v52's other columns): `sub_v54_t4_r2seeds.csv` = new runs as extra seeds inside the DINOv3-L / DINOv2-L
+  / EVA-02-L families (190 rows vs v52); `sub_v55_t4_r2fams.csv` = DINOv3-L-new and DINOv2-L-new as two extra families (10),
+  EVA-02-L LP-FT as a seed (254 rows vs v52).
+- **LB v55 (v52 + DINOv3-L-new and DINOv2-L-new as 2 extra families, EVA-02-L LP-FT seed, A = 2.0, 254 rows) = 0.86505**,
+  Δ +0.00045 vs v52 (implied t4 ≈ +0.002) → new best, agrees with both held-out folds. `final_pred.csv` / `submission.csv` = v55.
+  v54 (same runs as extra seeds, 190 rows vs v52, 183 vs v55) built but not uploaded.
+
+### 2026-11-21: why some families help on the LB, and two decision-rule tests (analysis on saved test probabilities)
+- Families that helped on the LB predict 14.6-16.5 % 7-11k and 24.7-26.7 % fiveN on test (A = 0); families that hurt predict
+  16.3-19.8 % 7-11k and 21.4-25.6 % fiveN (B-CLIP, the worst at -0.0024, is the extreme). Where good families (EVA-L, D2L,
+  D3L-new) and bad ones (B-CLIP, CAFormer, V2-L) disagree (2,817 rows), the bad say 7-11k and the good say fiveN in 693 rows,
+  the reverse only 112. Consistent with the test's fiveN crowd scenes. Disagreement is ≈ 11 % in every band of nearest-train
+  CLIP similarity, so the errors are not limited to the least train-like frames.
+- Held-out at A = 2: large ViTs alone beat the full blend (fold 4 0.9358 vs 0.9213; fold 3 D3L-new alone 0.9848 vs 0.9814).
+  **LB v56 (v55 with only the 6 large-ViT families, 390 rows) = 0.86489, Δ -0.00016 vs v55** → within noise, not adopted.
+- A = 2 moves many rows into roblock (7-11k → roblock 324, pube → roblock 218, fiveN → roblock 127). Test: same 7-11k share
+  without the roblock boost (`--div0=8`, divide only the 7-11k probability by 8). **LB v57 = 0.86287, Δ -0.00218 vs v55 (747 rows)**
+  → clear loss: the roblock boost of the π^A rule is right; the rule stays p/π^2.0.
+- **R26 (2026-11-21): round 3 on the team's Kaggle accounts** (`src/build_cloud_kit.py` → `cloud_kit_t4/round3`): the round-2
+  recipe moved to the EVA-02-L families (126×238, 15 epochs, batch 64, lr 5e-5, ld 0.85, HUD 0.7, LP-FT 2 epochs):
+  EVA-02-L × 3 seeds, M38M × 3 seeds, held-out folds 4 and 3 for EVA-02-L, and 3rd seeds of DINOv3-L-new / DINOv2-L-new.
+  CPU check: both EVA-02-L checkpoints load at 126×238 (position embedding 1,025 → 154 tokens, only the head missing).
+
+### R26 results (2026-11-22, `cloud_kit_t4/run3`, all 10 jobs done)
+- Final losses: EVA-02-L-new s42 / s7 / s123 0.3993 / 0.4007 / 0.3995 (old EVA-02-L 0.399-0.400); M38M-new 0.4003 / 0.4016 / 0.4014;
+  DINOv3-L-new s123 0.4044, DINOv2-L-new s123 0.4251 (as s42 / s7).
+- Held-out non-dark: `h_eva02l_n126` fold 4 **0.9540**, fold 3 **0.9806** (D3L-new 0.9609 / 0.9811). Added to the v55-like held-out blend
+  (A = 0 / 1 / 2): fold 4 0.9626 → 0.9635 / 0.9489 → 0.9505 / 0.9213 → 0.9216; fold 3 0.9752 → 0.9790 / 0.9796 → 0.9826 / 0.9814 → 0.9852.
+- Test: the new EVA families look different from the old ones (agreement 0.876 EVA-L new vs old, 0.871 M38M new vs old; seed pairs
+  0.932 / 0.934) and have the 'harmful' test profile of the 2026-11-21 analysis: 7-11k share 0.168 (EVA-L new) / 0.182 (M38M new)
+  vs 0.151 / 0.150 for the old recipes, fiveN 0.260 / 0.241, lower confidence (max p 0.856 / 0.852 vs 0.874 / 0.879). Likely
+  cause: EVA-02 was pretrained at 448 px; 9×17 patches lose detail, while the DINO models (pretrained at 224) do not.
+- Built: `sub_v58_t4_evaln.csv` (v55 + EVA-L-new family + 3rd seeds of D3L-new / D2L-new, 152 rows vs v55; seeds alone 65 rows),
+  `sub_v59_t4_evaln_m38n.csv` (+ M38M-new family, 244 rows vs v55).
+- **LB v58 (v55 + EVA-L-new family + 3rd DINO-new seeds, 152 rows) = 0.86514, Δ +0.00009 vs v55** → flat (noise ≈ ±0.0003); adopted
+  as `final_pred.csv` / `submission.csv` (best LB, held-out slightly positive, more models = lower variance; v50 precedent).
+- **LB v59 (v58 + M38M-new family, 244 rows vs v55) = 0.86513, Δ -0.00001 vs v58** → flat; not adopted (no gain, 'harmful' test profile).
+  The round-2/3 recipe helps the DINO families (pretrained at 224 px) but adds ≈ nothing for EVA-02 (pretrained at 448 px).
+- **LB v60 (v58 families at A = 1.0, 553 rows vs v58) = 0.86326**, -0.00188 vs v58 (v45 vs v47 on the v43 families: -0.00180):
+  the prior effect is stable across family sets. v60 = hedge for the 2nd final selection.
+
+### 2026-11-22: is the decision rule still leaving points? (held-out folds 4 / 3, non-dark, v58-like families)
+- The A = 3.0 collapse is caused by label smoothing (ε 0.1 caps the max probability near 0.92, so a prior factor > 46 flips
+  every row). Removing the smoothing before the rule (p' = (p - ε/5)/(1 - ε)) removes the collapse (fold 4 at A = 3:
+  0.6831 → 0.9008; fold 3 0.6791 → 0.9854).
+- Fair comparison = each blend mode tuned to the SAME test class mix as v58, then scored on held-out (also resampled to the
+  test-like mix): arithmetic A = 2.00 → fold 4 0.9216 / fold 3 0.9852; unsmoothed A = 2.20 (42 test rows differ) 0.9226 / 0.9852;
+  geometric mean A = 2.40 (203 rows) 0.9198 / 0.9841. → the current rule is already efficient; nothing to upload here.
+- Next lever = stronger models. Round 4 (`cloud_kit_t4/round4`): the near-native DINO recipe on DINOv2-g/14 reg4 (1.1B) and
+  DINOv3 ViT-H+/16 (841M), last 12 blocks trained (`ft.py --freeze-blocks`, new; CPU-tested: re-entrant checkpointing would
+  leave 84 of 88 trainable tensors without gradients, so the option forces the non-re-entrant version; the LP stage now
+  restores each parameter's own trainable flag). Gate before any upload: held-out on BOTH folds ≥ the L counterpart
+  (D3L-new 0.9609 / 0.9811, D2L-new 0.9600) and a test profile like the helpful families (7-11k share ≤ ≈ 0.15 at A = 0).
+- Where the remaining test errors are (v58, 2026-11-22): the most test-like frames (adversarial p > 0.9, 680 rows) are now predicted
+  confidently (81 % fiveN, 18 % roblock; ≥ 3 of 11 families disagree on only 4.4 %). The contested pool = 2,621 rows (10.1 %)
+  where ≥ 3 of 11 families disagree with the blend (1,173 rows with ≥ 5), spread over all class pairs (fiveN-roblock 591,
+  fried-pube 433, fiveN-fried 411, pube-roblock 309, fiveN-pube 304, ...): no single rule or pairwise specialist can win it,
+  only a model that is better on unseen scenes. 0.87 on the LB needs ≈ +0.025 t4 ≈ 650 of these rows.
+- Round 4 account 5 switched from 4th seeds of the L families (≈ 0 expected: the 3rd seeds changed 65 rows) to 3rd seeds of
+  the two giant models.
+
+### R27 results (2026-11-22, round 4, `cloud_kit_t4/run4`, all 10 jobs done)
+Giant DINO models with the near-native recipe, last 12 blocks trained (`--freeze-blocks`): DINOv2-g/14 reg4 (1.1B) at 126×238,
+DINOv3 ViT-H+/16 (841M) at 144×272; 3 full-data seeds each (42 / 7 / 123) + held-out folds 4 and 3.
+- Final losses: D2g 0.4034 / 0.4020 / 0.4012 (D2L-new 0.425), D3H+ 0.4418 / 0.4433 / 0.4429 (D3L-new 0.405).
+- Held-out non-dark, singles (A = 0 / 1 / 2): fold 4 D2g 0.9553 / 0.9365 / 0.9171, D3H+ 0.9572 / 0.9461 / 0.9298
+  (D3L-new 0.9609 / 0.9564 / 0.9495, D2L-new 0.9600 / 0.9467 / 0.9319); fold 3 D2g 0.9785 / 0.9823 / 0.9838,
+  D3H+ 0.9783 / 0.9814 / 0.9824 (D3L-new 0.9811 / 0.9847 / 0.9848). → the strict gate (≥ the L counterpart on both folds) failed,
+  by less than single-seed noise.
+- Held-out blends (v58-like families; A = 0 / 1 / 2): fold 4 0.9633 / 0.9501 / 0.9222 → + D2g + D3H+ 0.9640 / 0.9488 / 0.9216;
+  fold 3 0.9790 / 0.9826 / 0.9852 → 0.9828 / 0.9868 / 0.9871. As seeds inside D2L-new / D3L-new instead of new families: worse on
+  both folds (fold 4 A=2 0.9206, fold 3 0.9862).
+- Test profile (A = 0): 7-11k share D2g 0.147, D3H+ 0.139, fiveN 0.265 / 0.270, max p 0.868 / 0.881 = the 'helpful' profile
+  (like D3L-new / D2L-new). Agreement with their L counterparts 0.927 / 0.929 (= different models); seed pairs 0.95 (D2g) / 0.97 (D3H+).
+- **LB v61 (v58 + D2g family + D3H+ family, 13 families, A = 2.0, 241 rows vs v58) = 0.86586, Δ +0.00072 vs v58** → new best,
+  clearly beyond noise (±0.0003). `final_pred.csv` / `submission.csv` = v61. Again the LB gain is larger than held-out suggests,
+  and the test-profile check (7-11k share ≤ 0.15) predicted it better than the single-model held-out gate.
+- **LB v62 (v61's families at A = 1.0, 511 rows vs v61) = 0.86431**, -0.00155 vs v61 (v60 vs v58: -0.00188), +0.00105 vs v60:
+  the giant families help at both prior strengths. v62 = hedge for the 2nd final selection (replaces v60).

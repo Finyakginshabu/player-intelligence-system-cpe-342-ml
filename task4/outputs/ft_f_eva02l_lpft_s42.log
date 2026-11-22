@@ -1,0 +1,13 @@
+12:17:23 === f_eva02l_lpft_s42: {'name': 'f_eva02l_lpft_s42', 'backbone': 'eva02_large_patch14_448.mim_in22k_ft_in22k_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 16, 'lr': 3e-05, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 2, 'lp_lr': 0.001, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 7.468, 'save_weights': True}
+12:37:06 LP ep 0: loss 0.8602  1153s
+12:56:21 LP ep 1: loss 0.7477  1155s
+14:13:03 fold 0 ep 0: loss 0.6324  4603s  6.2 GB
+15:29:36 fold 0 ep 1: loss 0.4472  4589s  6.2 GB
+16:45:57 fold 0 ep 2: loss 0.4208  4578s  6.2 GB
+18:02:16 fold 0 ep 3: loss 0.4074  4574s  6.2 GB
+19:18:26 fold 0 ep 4: loss 0.4012  4567s  6.2 GB
+19:18:30 fold 0: paused after epoch 4 (7.02 h used of 7.47 h); rerun to resume
+01:54:21 === f_eva02l_lpft_s42: {'name': 'f_eva02l_lpft_s42', 'backbone': 'eva02_large_patch14_448.mim_in22k_ft_in22k_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 16, 'lr': 3e-05, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 0.85, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.0, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 2, 'lp_lr': 0.001, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': '', 'la_tau': 0.0, 'ckpt': True, 'max_hours': 7.466, 'save_weights': True}
+01:54:48 fold 0: resumed from the checkpoint after epoch 4
+03:18:42 fold 0 ep 5: loss 0.3988  5034s  6.2 GB
+04:09:44 === f_eva02l_lpft_s42 [full folds ['0']]: macro F1 mean 0.0000 +- 0.0000  [0.0]

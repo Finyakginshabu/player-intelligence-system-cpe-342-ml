@@ -1,0 +1,7 @@
+18:05:24 === f_small_hud_s42: {'name': 'f_small_hud_s42', 'backbone': 'convnext_small.fb_in22k_ft_in1k', 'cv': 'full', 'folds': '0,1,2,3,4', 'epochs': 6, 'batch': 24, 'lr': 0.0002, 'wd': 0.05, 'h': 224, 'w': 448, 'drop_path': 0.2, 'layer_decay': 1.0, 'mix': 0.0, 'hue': 0.05, 'gray': 0.0, 'invert': 0.05, 'rot_max': 8.0, 'rot_p': 0.3, 'chperm': 0.0, 'hud': 0.5, 'scale_min': 0.75, 'erase': 0.0, 'balance': 0.5, 'scale_max': 1.0, 'tta_grid': False, 'scene_balance': 0.0, 'scene_k': 10, 'ema': 0.0, 'smooth': 0.1, 'lp_epochs': 0, 'lp_lr': 0.001, 'no_test': False, 'limit': 0, 'seed': 42, 'grad_ckpt': True, 'init': ''}
+18:19:50 fold 0 ep 0: loss 0.8127  645s  1.8 GB
+18:30:01 fold 0 ep 1: loss 0.5353  611s  1.8 GB
+18:39:53 fold 0 ep 2: loss 0.4787  592s  1.8 GB
+18:49:43 fold 0 ep 3: loss 0.4420  590s  1.8 GB
+18:59:30 fold 0 ep 4: loss 0.4180  587s  1.8 GB
+19:09:28 fold 0 ep 5: loss 0.4097  597s  1.8 GB

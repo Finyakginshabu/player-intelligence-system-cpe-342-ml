@@ -1,8 +1,8 @@
-"""Nested-CV ensembling of saved OOF/test prediction pairs (the /ensemble command).
+"""Nested-CV ensembling of saved OOF/test prediction pairs.
 
 Every blend choice (hill-climbing weights, stacker, threshold) is made on 4 folds' OOF and scored on the 5th, so the
 reported score is honest. Supported tasks: 1 (binary F2, tuned threshold) and 2 (macro F1, argmax).
-Usage from repo root: python -m common.ensemble 1 lgbm lgbm_sig_5seed cat_sig_5seed ...
+Usage from repo root: PYTHONPATH=. python experiments/scripts/ensemble.py 1 lgbm lgbm_sig_5seed cat_sig_5seed ...
 """
 import sys
 

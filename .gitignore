@@ -1,4 +1,4 @@
-# data & submissions (log.md is tracked)
+# data & local Kaggle files (the upload log is experiments/submissions/log.md)
 data/
 cpe342-kaggle-main/
 submissions/*.csv

@@ -13,9 +13,11 @@ experiments/
 │                          round-1 ConvNeXt-T fine-tune, and the first final notebook (blend via a script)
 ├── task4/src/             scene-held-out CV, benchmarks, blend scripts, cloud-GPU job kits, queue / launch scripts
 ├── task4/outputs/         training logs and results of every task-4 run that is not in the final blend
-└── scripts/inspect_ids.py check of the test-id → submission-row mapping
+├── scripts/inspect_ids.py check of the test-id → submission-row mapping
+├── scripts/ensemble.py   nested-CV blending of saved OOF/test predictions (tasks 1, 2; no blend beat the best single model)
+└── submissions/log.md    every Kaggle upload (v1 → v62) with its public LB score
 ```
 
 The scripts are archived as they were run, from `taskN/src/` in the old layout: they locate the repository with
 `Path(__file__).parents[2]` and import their neighbours from the same folder. To rerun one, copy it back into
-`taskN/src/` first. The Kaggle upload history with every public LB score is in `../submissions/log.md`.
+`taskN/src/` first. The Kaggle upload history with every public LB score is in `submissions/log.md`.

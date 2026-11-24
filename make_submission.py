@@ -176,7 +176,7 @@ def main() -> None:
         print(f"changes vs {args.base}:\n{diff_summary(sub, base)}")
         if len(args.replace) > 1:
             print("WARNING: more than one task replaced -> the LB delta can't be attributed to one task")
-    print(f"OK: wrote {args.out} ({len(sub)} rows). Log it in submissions/log.md after submitting.")
+    print(f"OK: wrote {args.out} ({len(sub)} rows). Log it in experiments/submissions/log.md after submitting.")
 
 
 if __name__ == "__main__":

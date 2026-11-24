@@ -29,8 +29,7 @@ task4/task4.ipynb       final notebook  -> task4/outputs/final_pred.csv   (train
       outputs/saved_probs/   test probabilities of our 43 training runs (used when TRAIN = False)
       outputs/train_logs/    the training log of each of those runs (exact arguments, loss per epoch)
 task5/task5.ipynb       final notebook  -> task5/outputs/final_pred.csv
-experiments/            everything else: experiment scripts, logs, notes, old notebooks (see experiments/README.md)
-submissions/log.md      every Kaggle upload with its public LB score
+experiments/            everything else: experiment scripts, logs, the Kaggle upload log, old notebooks (see experiments/README.md)
 ```
 
 ## How to run

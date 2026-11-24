@@ -2,7 +2,6 @@
 data/
 cpe342-kaggle-main/
 submissions/*.csv
-submission.csv
 
 # large model artifacts (final_pred.csv stays tracked)
 *.npy
@@ -21,7 +20,6 @@ catboost_info/
 __pycache__/
 *.pyc
 *.egg-info/
-.pytest_cache/
 .ipynb_checkpoints/
 .venv/
 .venv-gpu/

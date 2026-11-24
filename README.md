@@ -20,8 +20,8 @@ kept separately in [`experiments/`](experiments/).
 README.md               this file (how to run)
 requirements.txt        Python packages
 make_submission.py      merges the five taskN/outputs/final_pred.csv into submission.csv and validates it
+submission.csv          our final Kaggle file (v61, public LB 0.86586), as rebuilt by make_submission.py
 common/                 shared code: data paths, exact competition metrics, seeds, prediction I/O
-tests/                  unit tests for common/ and make_submission.py
 task1/task1.ipynb       final notebook  -> task1/outputs/final_pred.csv
 task2/task2.ipynb       final notebook  -> task2/outputs/final_pred.csv   (helpers: task2/src/nb.py, features.py)
 task3/task3.ipynb       final notebook  -> task3/outputs/final_pred.csv
@@ -31,7 +31,6 @@ task4/task4.ipynb       final notebook  -> task4/outputs/final_pred.csv   (train
 task5/task5.ipynb       final notebook  -> task5/outputs/final_pred.csv
 experiments/            everything else: experiment scripts, logs, notes, old notebooks (see experiments/README.md)
 submissions/log.md      every Kaggle upload with its public LB score
-references/             the course's project instruction
 ```
 
 ## How to run
@@ -80,7 +79,6 @@ Each notebook finds the repository root itself and writes `taskN/outputs/final_p
 ### 4. Build the submission
 ```bash
 python make_submission.py        # -> submission.csv (25,889 rows: id, task1 … task5), validated
-python -m pytest -q              # optional: tests for common/ and make_submission.py
 ```
 
 **Reproducibility (checked 2026-11-23 on the Mac above):** running the five notebooks and `make_submission.py` rebuilds

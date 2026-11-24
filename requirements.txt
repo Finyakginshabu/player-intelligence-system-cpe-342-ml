@@ -1,25 +1,21 @@
-﻿# Pinned to the versions installed on the dev machine (Python 3.12).
+﻿# Python 3.12. Versions used to rebuild the final submission (2026-11-23).
 numpy==2.5.3
-pandas==3.0.6
+pandas==3.0.5
 scipy==1.18.1
 scikit-learn==1.9.1
-imbalanced-learn==0.14.2
+lightgbm==4.7.0
 matplotlib==3.11.2
-seaborn==0.13.2
-pyarrow==26.0.0
-kaggle==2.2.5
-nbformat==5.11.1
+pillow==12.3.0
+
+# running the notebooks and the tests
+jupyter
 ipykernel==7.3.0
+nbconvert==7.17.1
 pytest==9.2.0
 
-# Not yet installed: pin with `pip freeze` after first install.
-xgboost
-lightgbm
-catboost
-optuna
-jupyter
+# data download
+kaggle==2.2.5
 
-# Task 4 only (usually run on Colab/Kaggle GPU, where torch is preinstalled)
-torch==2.14.1
-torchvision==0.29.2
-timm
+# task 4 training only (task4.ipynb with TRAIN = True, on an NVIDIA GPU); not needed for TRAIN = False
+torch>=2.4
+timm>=1.0.20

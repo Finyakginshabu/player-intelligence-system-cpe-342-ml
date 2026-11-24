@@ -6,6 +6,8 @@ submission.csv
 
 # large model artifacts (final_pred.csv stays tracked)
 *.npy
+!task4/outputs/saved_probs/*.npy
+task4/outputs/retrain/
 *.npz
 *.pt
 *.pth
@@ -27,3 +29,4 @@ __pycache__/
 # local-only
 kaggle.json
 .env
+.DS_Store
